@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="16dp"
+    tools:context=".ExampleActivity">
+
+    <TextView
+        android:id="@+id/exampleTextView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:text="Press orange button for normal transaction flow.\n
+Press gray button for transaction dummy success response.\n
+Press white button for transaction dummy failure response."
+        android:layout_weight="1"
+        android:gravity="center"
+        />
+    <EditText
+        android:id="@+id/et_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:hint="Enter time in seconds"
+        />
+
+    <com.evertecinc.athmovil.sdk.checkout.PayButton
+        android:onClick="onClickPayButton"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="8dp"
+        />
+
+    <com.evertecinc.athmovil.sdk.checkout.PayButton
+        android:onClick="onClickDarkPayButton"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        app:style="dark"
+        app:language="english"
+        android:layout_marginTop="8dp"
+        />
+
+    <com.evertecinc.athmovil.sdk.checkout.PayButton
+        android:onClick="onClickLightPayButton"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        app:style="light"
+        app:language="espanol"
+        android:layout_marginTop="8dp"
+        />
+</LinearLayout>

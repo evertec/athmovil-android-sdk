@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <declare-styleable name="PayButton">
+        <attr name="style" format="enum">
+            <enum name="original"   value="0" />
+            <enum name="light"      value="1" />
+            <enum name="dark"       value="2" />
+        </attr>
+        <attr name="language" format="enum">
+            <enum name="english" value="0"/>
+            <enum name="espanol" value="1"/>
+        </attr>
+    </declare-styleable>
+
+</resources>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="dark_button">#424242</color>
+    <color name="orange_button">#F57C00</color>
+    <color name="light_button">#f9f9f9</color>
+</resources>
