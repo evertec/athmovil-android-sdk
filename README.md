@@ -33,7 +33,7 @@ Before we get started, let’s configure your project:
 ```java
 dependencies {
     …
-    compile 'com.github.evertecinc:athmovil-android-sdk:1.0.0'
+    compile 'com.github.evertec:athmovil-android-sdk:1.0.0'
 }
 ```
 
