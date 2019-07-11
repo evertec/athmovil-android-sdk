@@ -2,14 +2,14 @@
 <resources>
     
     <declare-styleable name="PayButton">
-        <attr name="style" format="enum">
+        <attr name="buttonTheme" format="enum">
             <enum name="original"   value="0" />
             <enum name="light"      value="1" />
             <enum name="dark"       value="2" />
         </attr>
-        <attr name="language" format="enum">
-            <enum name="english" value="0"/>
-            <enum name="espanol" value="1"/>
+        <attr name="lang" format="enum">
+            <enum name="en" value="0"/>
+            <enum name="es" value="1"/>
         </attr>
     </declare-styleable>
 

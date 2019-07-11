@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+   <item
+       android:id="@+id/or"
+       android:title="Original"/>
+    <item
+        android:id="@+id/da"
+        android:title="Dark"/>
+    <item
+        android:id="@+id/li"
+        android:title="Light"/>
+</menu>

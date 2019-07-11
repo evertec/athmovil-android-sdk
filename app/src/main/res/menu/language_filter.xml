@@ -1,0 +1,13 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+   <item
+       android:id="@+id/en"
+       android:title="English"
+       />
+    <item
+        android:id="@+id/es"
+        android:title="Spanish"/>
+    <item
+        android:id="@+id/de"
+        android:title="Default"/>
+</menu>

@@ -1,9 +1,9 @@
 package com.evertecinc.athmovil.sdk.checkout.utils;
 
 import android.util.Log;
-import com.evertecinc.athmovil.sdk.checkout.objects.ItemsSelected;
-import com.evertecinc.athmovil.sdk.checkout.objects.PurchaseData;
-import com.evertecinc.athmovil.sdk.checkout.objects.PurchaseReturnedData;
+import com.evertecinc.athmovil.sdk.checkout.objects.Items;
+import com.evertecinc.athmovil.sdk.checkout.objects.ATHMPayment;
+import com.evertecinc.athmovil.sdk.checkout.objects.PaymentReturnedData;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,48 +11,69 @@ import org.json.JSONObject;
  * Created by Juan Gabriel Zaragoza Bonilla on 3/19/2018.
  */
 public class JsonUtil {
-    public static String toJson(PurchaseData purchaseData) {
+    public static String toJson(ATHMPayment ATHMPayment) {
         try {
-            JSONObject json = new JSONObject();
-            json.put(ConstantUtil.PURCHASE_JSON_BUSINESS_TOKEN_KEY, purchaseData.getBusinessToken());
-            json.put(ConstantUtil.PURCHASE_JSON_SUBTOTAL__KEY, purchaseData.getSubtotal());
-            json.put(ConstantUtil.PURCHASE_JSON_TAX_KEY, purchaseData.getTax());
-            json.put(ConstantUtil.PURCHASE_JSON_TOTAL_KEY, purchaseData.getTotal());
 
+            JSONObject json = new JSONObject();
+            json.put(ConstantUtil.PAYMENT_JSON_PUBLIC_TOKEN_KEY, ATHMPayment.getPublicToken());
+            json.put(ConstantUtil.PAYMENT_JSON_SUBTOTAL__KEY, String.valueOf(ATHMPayment.getSubtotal()));
+            json.put(ConstantUtil.PAYMENT_JSON_TAX_KEY, String.valueOf(ATHMPayment.getTax()));
+            json.put(ConstantUtil.PAYMENT_JSON_TOTAL_KEY, String.valueOf(ATHMPayment.getTotal()));
+            json.put(ConstantUtil.PAYMENT_JSON_SCHEMA_KEY, ATHMPayment.getCallbackSchema());
+            json.put(ConstantUtil.PAYMENT_JSON_METADATA_1, ATHMPayment.getMetadata1());
+            json.put(ConstantUtil.PAYMENT_JSON_METADATA_2, ATHMPayment.getMetadata2());
             JSONArray jsonArray = new JSONArray();
 
-            for(ItemsSelected itemsSelected: purchaseData.getItemsSelectedList()){
+            for (Items items : ATHMPayment.getItems()) {
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put(ConstantUtil.PURCHASE_JSON_ITEM_NAME_KEY, itemsSelected.getName());
-                jsonObject.put(ConstantUtil.PURCHASE_JSON_ITEM_DESCRIPTION_KEY,
-                        itemsSelected.getDescription());
-                jsonObject.put(ConstantUtil.PURCHASE_JSON_ITEM_PRICE_KEY, itemsSelected.getPrice());
-                jsonObject.put(ConstantUtil.PURCHASE_JSON_ITEM_QUANTITY_KEY,
-                        itemsSelected.getQuantity());
+                jsonObject.put(ConstantUtil.PAYMENT_JSON_ITEM_NAME_KEY, items.getName());
+                jsonObject.put(ConstantUtil.PAYMENT_JSON_ITEM_DESCRIPTION_KEY,
+                        items.getDesc());
+                jsonObject.put(ConstantUtil.PAYMENT_JSON_ITEM_PRICE_KEY, String.valueOf(items.getPrice()));
+                jsonObject.put(ConstantUtil.PAYMENT_JSON_ITEM_QUANTITY_KEY,
+                        String.valueOf(items.getQuantity()));
+                jsonObject.put(ConstantUtil.PAYMENT_JASON_ITEM_METADATA_KEY,
+                        String.valueOf(items.getMetadata()));
                 jsonArray.put(jsonObject);
             }
-            json.put(ConstantUtil.PURCHASE_JSON_ITEM_LIST_KEY,jsonArray);
+            json.put("itemsSelectedList", jsonArray);
             return json.toString();
-        } catch (JSONException jsonError){
-            Log.e("JSON Convert Error",jsonError.getMessage());
+        } catch (JSONException jsonError) {
+            Log.e("JSON Convert Error", jsonError.getMessage());
             return null;
         }
     }
-    public static String returnedJson(PurchaseReturnedData purchaseInfo){
+
+    //For dummy responses
+    public static String returnedJson(PaymentReturnedData paymentInfo) {
         try {
             JSONObject json = new JSONObject();
+            json.put(ConstantUtil.RETURNED_JSON_STATUS_KEY, paymentInfo.getStatus());
+            json.put(ConstantUtil.REFERENCE_NUMBER_KEY, paymentInfo.getReferenceNumber());
+            json.put(ConstantUtil.RETURNED_JSON_TOTAL_KEY, paymentInfo.getTotal());
+            json.put(ConstantUtil.RETURNED_JSON_SUBTOTAL_KEY, paymentInfo.getSubtotal());
+            json.put(ConstantUtil.RETURNED_JSON_TAX_KEY, paymentInfo.getTax());
+            json.put(ConstantUtil.RETURNED_JSON_METADATA1_KEY, paymentInfo.getMetadata1());
+            json.put(ConstantUtil.RETURNED_JSON_METADATA2_KEY, paymentInfo.getMetadata2());
 
-            json.put(ConstantUtil.RETURNED_JSON_COMPLETION_KEY, purchaseInfo.getCompleted());
-            json.put(ConstantUtil.RETURNED_JSON_STATUS_KEY, purchaseInfo.getStatus());
-            json.put(ConstantUtil.CART_REFERENCE_ID_KEY, purchaseInfo.getCartReferenceId());
-            json.put(ConstantUtil.RETURNED_JSON_DAILY_TRANSACTION_ID_KEY,
-                    purchaseInfo.getDailyTransactionId());
-            json.put(ConstantUtil.RETURNED_JSON_TRANSACTION_REFERENCE_KEY,
-                    purchaseInfo.getTransactionReference());
+            JSONArray jsonArray = new JSONArray();
+            for (Items items : paymentInfo.getItemsSelectedList()) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put(ConstantUtil.PAYMENT_JSON_ITEM_NAME_KEY, items.getName());
+                jsonObject.put(ConstantUtil.RETURNED_JSON_ITEM_DESCRIPTION_KEY,
+                        items.getDesc());
+                jsonObject.put(ConstantUtil.PAYMENT_JSON_ITEM_PRICE_KEY, String.valueOf(items.getPrice()));
+                jsonObject.put(ConstantUtil.PAYMENT_JSON_ITEM_QUANTITY_KEY,
+                        String.valueOf(items.getQuantity()));
+                jsonObject.put(ConstantUtil.PAYMENT_JASON_ITEM_METADATA_KEY,
+                        String.valueOf(items.getMetadata()));
+                jsonArray.put(jsonObject);
+            }
+            json.put(ConstantUtil.PAYMENT_JSON_ITEM_LIST_KEY, jsonArray);
 
             return json.toString();
-        } catch (JSONException jsonError){
-            Log.e("JSON Convert Error",jsonError.getMessage());
+        } catch (JSONException jsonError) {
+            Log.e("JSON Convert Error", jsonError.getMessage());
             return null;
         }
     }

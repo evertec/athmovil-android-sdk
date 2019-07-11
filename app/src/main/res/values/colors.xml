@@ -3,4 +3,18 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="light_orange">#FB8C00</color>
+    <color name="orange">#F57C00</color>
+    <color name="dark_orange">#ef6c00</color>
+
+    <color name="pure_white">#FFFFFF</color>
+
+    <color name="background">#F9F9F9</color>
+
+    <color name="primaryBlack">#202020</color>
+    <color name="secondaryBlack">#747474</color>
+    <color name="disabledBlack">#9E9E9E</color>
+    <color name="borderBlack">#d0d0d0</color>
+    <color name="dividers">#adadad</color>
 </resources>

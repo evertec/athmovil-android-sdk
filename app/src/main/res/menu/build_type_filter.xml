@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+   <item
+       android:id="@+id/dev"
+       android:title="Development"/>
+    <item
+        android:id="@+id/qa"
+        android:title="Quality"/>
+    <item
+        android:id="@+id/piloto"
+        android:title="Piloto"/>
+    <item
+        android:id="@+id/release"
+        android:title="Produccion"/>
+
+</menu>

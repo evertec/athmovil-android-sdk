@@ -17,15 +17,16 @@ public class PayButton extends AppCompatImageButton {
     final static float BUTTON_ELEVATION = 2;
     final static float BUTTON_HEIGHT = 60;
 
-    private ButtonStyle selectedStyle = ButtonStyle.ORIGINAL;
+    private ButtonTheme selectedTheme = ButtonTheme.ORIGINAL;
     private ButtonLanguage selectedLanguage;
+    private int  defaultLanguage;
 
-    private enum ButtonStyle{
+    public enum ButtonTheme {
         ORIGINAL, LIGHT, DARK
     }
 
-    private enum ButtonLanguage{
-        ENGLISH, SPANISH
+    public enum ButtonLanguage {
+        EN, ES, DEFAULT
     }
 
     public PayButton(Context context) {
@@ -48,24 +49,25 @@ public class PayButton extends AppCompatImageButton {
      * @param attrs - button selected attributes
      */
     private void init(final Context context, final AttributeSet attrs) {
-        int  defaultLanguage = (getResources().getString(R.string.default_phone_language_code).
-                equalsIgnoreCase(SPANISH_LANGUAGE_CODE)) ? ButtonLanguage.SPANISH.ordinal():
-                ButtonLanguage.ENGLISH.ordinal();
+         defaultLanguage = (getResources().getString(R.string.default_phone_language_code).
+                equalsIgnoreCase(SPANISH_LANGUAGE_CODE)) ? ButtonLanguage.ES.ordinal():
+                ButtonLanguage.EN.ordinal();
 
         final TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.PayButton);
 
-        selectedStyle = ButtonStyle.values()[typedArray.getInt(R.styleable.PayButton_style,
-                selectedStyle.ordinal())];
+        selectedTheme = ButtonTheme.values()[typedArray.getInt(R.styleable.PayButton_buttonTheme,
+                selectedTheme.ordinal())];
 
-        selectedLanguage = ButtonLanguage.values()[typedArray.getInt(R.styleable.PayButton_language,
+        selectedLanguage = ButtonLanguage.values()[typedArray.getInt(R.styleable.PayButton_lang,
                 defaultLanguage)];
 
         typedArray.recycle();
     }
+
     @Override
     protected void onDraw(final Canvas canvas) {
         super.onDraw(canvas);
-        switch (selectedStyle) {
+        switch (selectedTheme) {
             case ORIGINAL:
                 setOriginalButton();
                 break;
@@ -97,10 +99,10 @@ public class PayButton extends AppCompatImageButton {
      */
     private void setOriginalButton() {
         switch (selectedLanguage) {
-            case ENGLISH:
+            case EN:
                 setImageDrawable(getResources().getDrawable(R.drawable.athm_white));
                 break;
-            case SPANISH:
+            case ES:
                 setImageDrawable(getResources().getDrawable(R.drawable.athm_white_es));
                 break;
         }
@@ -112,10 +114,10 @@ public class PayButton extends AppCompatImageButton {
      */
     private void setLightButton() {
         switch (selectedLanguage) {
-            case ENGLISH:
+            case EN:
                 setImageDrawable(getResources().getDrawable(R.drawable.athm_black));
                 break;
-            case SPANISH:
+            case ES:
                 setImageDrawable(getResources().getDrawable(R.drawable.athm_black_es));
                 break;
         }
@@ -127,14 +129,26 @@ public class PayButton extends AppCompatImageButton {
      */
     private void setDarkButton() {
         switch (selectedLanguage) {
-            case ENGLISH:
+            case EN:
                 setImageDrawable(getResources().getDrawable(R.drawable.athm_white));
                 break;
-            case SPANISH:
+            case ES:
                 setImageDrawable(getResources().getDrawable(R.drawable.athm_white_es));
                 break;
         }
         ViewCompat.setBackgroundTintList(this, ColorStateList.valueOf(getResources().
                 getColor(R.color.dark_button)));
+    }
+
+    public void setTheme(ButtonTheme buttonTheme){
+        selectedTheme = buttonTheme;
+    }
+
+    public  void setLanguage(ButtonLanguage language){
+        if(language.equals(ButtonLanguage.DEFAULT)){
+            selectedLanguage = defaultLanguage == 0 ? ButtonLanguage.EN : ButtonLanguage.ES;
+        } else {
+            selectedLanguage = language;
+        }
     }
 }
