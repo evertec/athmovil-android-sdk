@@ -191,7 +191,7 @@ public void onExpiredPayment(String referenceNumber, Double total, Double tax, D
 	* Wait for the payment to expire
 
 ## User Experience
-![alt text](https://preview.ibb.co/dX2cOz/API_Flow.png)
+![paymentux](paymentux.png)
 
 ## Legal
 ### Terms for the use of the API
