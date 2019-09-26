@@ -111,13 +111,14 @@ public void onClickPayButton(View view) {
 	athmPayment.setCallbackSchema("scheme");
 	athmPayment.setPublicToken("fb1f7ae2849a07da1545a89d997d8a435a5f21ac");
 	athmPayment.setTimeout(600);
-    athmPayment.setTotal(1.00);
-    athmPayment.setSubtotal(1.00);
+	athmPayment.setTotal(1.00);
+	athmPayment.setSubtotal(1.00);
 	athmPayment.setTax(1.00);
 	athmPayment.setMetadata1("metadata1 test");
 	athmPayment.setMetadata2("metadata2 test");
-    athmPayment.setItems(items);
-    sendData(purchaseData);
+	athmPayment.setItems(items);
+	athmPayment.setBuildType("");
+	sendData(purchaseData);
 }
 ```
 
@@ -130,7 +131,8 @@ public void onClickPayButton(View view) {
 | `setTax()` | Double | No | Optional variable to display the payment tax (if applicable). |
 | `setMetadata1()` | String | No | Optional variable to attach key-value data to the payment object. |
 | `setMetadata2()` | String | No | Optional variable to attach key-value data to the payment object. |
-| `setItems()` | Array | No | Optional variable to display the items that the user is purchasing on ATH Móvil's payment screen. Items on the array are expected in the following order: (“name”, “desc”, "quantity", “price”, “metadata”) ||
+| `setItems()` | Array | No | Optional variable to display the items that the user is purchasing on ATH Móvil's payment screen. Items on the array are expected in the following order: (“name”, “desc”, "quantity", “price”, “metadata”) |
+| `setBuildType()` | String | Yes | Identifies the application's build type. Should always be configured as an empty string. ||
 
 #### Handle all payment responses.
 
