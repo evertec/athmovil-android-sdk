@@ -7,10 +7,8 @@ import android.graphics.Canvas;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.AppCompatImageButton;
 import android.util.AttributeSet;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-/**
- * Created by Juan Gabriel Zaragoza Bonilla on 3/19/2018.
- */
 public class PayButton extends AppCompatImageButton {
 
     final static String SPANISH_LANGUAGE_CODE = "es";
@@ -49,7 +47,7 @@ public class PayButton extends AppCompatImageButton {
      * @param attrs - button selected attributes
      */
     private void init(final Context context, final AttributeSet attrs) {
-         defaultLanguage = (getResources().getString(R.string.default_phone_language_code).
+        defaultLanguage = (getResources().getString(R.string.default_phone_language_code).
                 equalsIgnoreCase(SPANISH_LANGUAGE_CODE)) ? ButtonLanguage.ES.ordinal():
                 ButtonLanguage.EN.ordinal();
 
@@ -83,7 +81,7 @@ public class PayButton extends AppCompatImageButton {
         }
 
         ViewCompat.setElevation(this, spToPx(getContext(), BUTTON_ELEVATION));
-        setScaleType(ScaleType.CENTER_INSIDE);
+        setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         getLayoutParams().height = spToPx(getContext(), BUTTON_HEIGHT);
         getLayoutParams().width = LinearLayout.LayoutParams.MATCH_PARENT;
         requestLayout();

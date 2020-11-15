@@ -3,9 +3,7 @@ package com.evertecinc.athmovil.sdk.checkout.objects;
 import android.content.Context;
 
 import java.util.ArrayList;
-/**
- * Created by Juan Gabriel Zaragoza Bonilla on 3/19/2018.
- */
+
 public class ATHMPayment {
     private Context context;
     private String publicToken;
@@ -18,13 +16,15 @@ public class ATHMPayment {
     private long timeout = 600;
     private ArrayList<Items> items =  new ArrayList<>();
 
+    public ArrayList<Items> getItems() {
+        return new ArrayList<>(items);
+    }
 
     public ATHMPayment(Context context){
         this.context = context;
     }
 
     public Context getContext() { return context; }
-    //public void setContext(Context context) { this.context = context; }
 
     public String getPublicToken() {return publicToken;}
     public void setPublicToken(String publicToken) {this.publicToken = publicToken;}
@@ -41,8 +41,12 @@ public class ATHMPayment {
     public long getTimeout() { return timeout * 1000 ; }
     public void setTimeout(long seconds) { this.timeout = seconds ; }
 
-    public ArrayList<Items> getItems() { return items; }
-    public void setItems(ArrayList<Items> items) { this.items = items; }
+    public void setItems(ArrayList<Items> items) {
+        this.items = new ArrayList<>();
+        if (items != null) {
+            this.items.addAll(items);
+        }
+    }
 
     public String getCallbackSchema() { return callbackSchema; }
     public void setCallbackSchema(String callbackSchema) { this.callbackSchema = callbackSchema; }

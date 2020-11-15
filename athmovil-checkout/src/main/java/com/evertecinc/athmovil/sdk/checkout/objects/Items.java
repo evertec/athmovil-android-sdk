@@ -15,7 +15,7 @@ public class Items implements Serializable {
     private String metadata;
 
     public Items(@NonNull String name, @NonNull String desc, @NonNull Double price,
-                 @NonNull Long quantity, @NonNull String metadata) {
+                 @NonNull Long quantity, String metadata) {
         this.name = name;
         this.desc = desc;
         this.price = price;
@@ -41,5 +41,17 @@ public class Items implements Serializable {
 
     public String getMetadata() {
         return metadata;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    public void setMetadata(String metadata) {
+        this.metadata = metadata;
     }
 }

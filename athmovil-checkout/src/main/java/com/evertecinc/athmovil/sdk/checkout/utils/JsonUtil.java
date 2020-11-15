@@ -5,7 +5,6 @@ import com.evertecinc.athmovil.sdk.checkout.objects.Items;
 import com.evertecinc.athmovil.sdk.checkout.objects.ATHMPayment;
 import com.evertecinc.athmovil.sdk.checkout.objects.PaymentReturnedData;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 /**
  * Created by Juan Gabriel Zaragoza Bonilla on 3/19/2018.
@@ -38,7 +37,7 @@ public class JsonUtil {
             }
             json.put("itemsSelectedList", jsonArray);
             return json.toString();
-        } catch (JSONException jsonError) {
+        } catch (Exception jsonError) {
             Log.e("JSON Convert Error", jsonError.getMessage());
             return null;
         }
@@ -72,7 +71,7 @@ public class JsonUtil {
             json.put(ConstantUtil.PAYMENT_JSON_ITEM_LIST_KEY, jsonArray);
 
             return json.toString();
-        } catch (JSONException jsonError) {
+        } catch (Exception jsonError) {
             Log.e("JSON Convert Error", jsonError.getMessage());
             return null;
         }

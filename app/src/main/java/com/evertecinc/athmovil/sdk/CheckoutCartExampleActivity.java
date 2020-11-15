@@ -1,13 +1,14 @@
 package com.evertecinc.athmovil.sdk;
 
-import android.support.v7.app.AppCompatActivity;
+
 import android.os.Bundle;
-import android.support.v7.widget.PopupMenu;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.evertecinc.athmovil.sdk.checkout.*;
@@ -40,14 +41,12 @@ public class CheckoutCartExampleActivity extends AppCompatActivity {
 
         //Setting up items
         for (int i = 0; i < 2; i++) {
-            items.add(new Items("Cake", "(8oz)", 0.25, 2L, "employee discount"));
+            items.add(new Items("Ssd", "(8oz)        ", 1.0, 2L, null));
             items.add(new Items("Coca Cola", "(68oz)", 0.75, 1L, "expiration 0820"));
         }
-
         setUpBuildTypeSelection();
         setUpButtonLanguageSelection();
         setUpButtonThemeSelection();
-
     }
 
     // Production functionality, provide correct data...
@@ -55,8 +54,8 @@ public class CheckoutCartExampleActivity extends AppCompatActivity {
         ATHMPayment payment = new ATHMPayment(this);
         payment.setPublicToken("933OH0Y08SFD7QEN2QJH6YD4RSKZZS7YAL0IUY0F");
         payment.setTotal(1.12);
-        payment.setMetadata1("Milk");
-        payment.setMetadata2("Shake 2");
+        payment.setMetadata1("test");
+        payment.setMetadata2("test      ");
         payment.setCallbackSchema("ATHMSDK");
 
         if (!TextUtils.isEmpty(token.getText())){
@@ -68,7 +67,7 @@ public class CheckoutCartExampleActivity extends AppCompatActivity {
         }
 
         if (cbWithSubtotal.isChecked()) {
-            payment.setSubtotal(1.00);
+            payment.setSubtotal(0);
         }
 
         if (cbWithTax.isChecked()) {
