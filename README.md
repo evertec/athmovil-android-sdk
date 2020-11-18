@@ -1,21 +1,16 @@
-# ATH Móvil Android SDK
+# ATH Móvil Payment Button - Android SDK
 
 
 ## Introduction
-The ATH Móvil SDK provides a simple, secure and fast checkout experience to customers paying on your Android application. After integrating our Payment Button on your app you will be able to receive instant payments from more than a million ATH Móvil users.
+ATH Móvil's Payment Button SDK provides a simple, secure and fast checkout experience to customers paying on your Android application. After integrating our Payment Button on your app you will be able to receive real time payments from more than 1.5 million ATH Móvil users.
 
 
 ## Prerequisites
 Before you begin, please review the following prerequisites:
-
-1. An active ATH Móvil Business account is required to continue.
- * Note: *To sign up, download "ATH Móvil Business" on the App Store if you have an iOS device or on the Play Store if you have an Android device.*
-
-
+1. An active ATH Móvil Business account is required to continue. To sign up, download "ATH Móvil Business" on the App Store or Play Store of your iOS or Android device.
 2. Your ATH Móvil Business account needs to have a registered, verified and active ATH® card.
+3. Have the public and private API keys of your Business account at hand. **You can view your API keys on the settings section of ATH Móvil Business for iOS or Android.**
 
-3. Have the public and private API keys of your Business account at hand.
- * Note: ***You can view your API keys on the settings section of the ATH Móvil Business application for iOS or Android.***
 
 ## Support
 If you need help signing up, adding a card or have any other question please refer to https://athmovilbusiness.com/preguntas or contact our support team at (787) 773-5466. For technical support please complete the following form:  https://forms.gle/ZSeL8DtxVNP2K2iDA.
@@ -37,7 +32,7 @@ Before we get started, let’s configure your project:
 ```java
 dependencies {
     …
-    implementation 'com.github.evertec:athmovil-android-sdk:2.0.0'
+    implementation 'com.github.evertec:athmovil-android-sdk:3.0.0'
 	implementation 'com.google.code.gson:gson:2.8.2'
 }
 ```
@@ -109,7 +104,7 @@ Create an `ATHMPayment` object on the main class of the file.
 ATHMPayment athmPayment = new ATHMPayment(this);
 ```
 
-Configure the payment values and execution on the onClick of the XML button that we recently created. *Details of the methods used to configure the payment details are provided below.*
+Configure the payment values and execution on the onClick of the XML button that we recently created. Details of the methods used to configure the payment details are provided below.
 ```java
 public void onClickPayButton(View view) {
 	athmPayment.setCallbackSchema("scheme");
@@ -133,23 +128,76 @@ public void onClickPayButton(View view) {
 | `setTotal()` | Double | Yes | Total amount to be paid by the end user. |
 | `setSubtotal()` | Double | No | Optional  variable to display the payment subtotal (if applicable) |
 | `setTax()` | Double | No | Optional variable to display the payment tax (if applicable). |
-| `setMetadata1()` | String | No | Optional variable to attach key-value data to the payment object. |
-| `setMetadata2()` | String | No | Optional variable to attach key-value data to the payment object. |
+| `setMetadata1()` | String | No | Optional variable to attach data to the payment object. |
+| `setMetadata2()` | String | No | Optional variable to attach data to the payment object. |
 | `setItems()` | Array | No | Optional variable to display the items that the user is purchasing on ATH Móvil's payment screen. Items on the array are expected in the following order: (“name”, “desc”, "quantity", “price”, “metadata”) |
 | `setBuildType()` | String | Yes | Identifies the application's build type. Should always be configured as an empty string. ||
 
+* In the request make sure you comply with the following requirements for the `ATHMPayment` object, otherwise you will receive an exception on the callback:
+| Variable  | Expeted Value |
+| ------------- |:-------------:|
+| `total` | Positive value |
+| `subtotal` | Positive value or zero |
+| `tax` | Positive value or zero |
+| `metadata1` | A string with characters, digits or spaces |
+| `metadata2` | A string with characters, digits or spaces |
+| `token` | A string with characters |
+| `urlScheme` | A string with characters. **Do not use the urlscheme in the example❗️** |
+| `timeout` | Integer between 60 and 600 |
+
+* If you provide items in the request make sure you comply with these requirements for the `ATHMPaymentItem` object:
+| Variable  | Expeted Value |
+| ------------- |:-------------:|
+| `name` | A string with characters |
+| `price` | Positive value greater than zero |
+| `quantity` | Positive value greater than zero |
+| `metadata` | A string with characters, digits or spaces |
+
+* *Note: the payment information and items on the response are the same objects that were received in the request. Values and data types are identical. The response includes the following additional variables:*
+| Variable  | Data Type | Description |
+| ------------- |:-------------:|------------- |
+| `dailyTransactionID` | Int | Daily ID of the transaction. If the transaction was cancelled o expired value will be 0. |
+| `referenceNumber` | String | Unique transaction identifier. If the transaction was cancelled o expired value will be 0. |
+| `date` | Date | Transaction's date. |
+| `name` | String | Name registered on ATH Móvil of user that paid for the transaction. |
+| `phoneNumber` | String | Phone number registered on ATH Móvil of user that paid for the transaction. |
+| `email` | String | 	Email address registered on ATH Móvil of user that paid for the transaction. |
+
+The SDK validates the information that is sent and received on all requests and responses.
+
+* If unexpected data is sent on the request of the payment the SDK will throw an exception. Your application must be able to handle these exceptions.
+
+  * `NullATHMPaymentObjectException`: error returned when the `ATHMPayment` object is null.
+  * `NullApplicationContextException`: error returned when the initial application context is null.
+  * `InvalidPaymentRequestException`: error returned when request variables are invalid.
+  * `JsonEncoderException`: error returned when JSON encoding the request data fails.
+
+  ```java
+  try {
+      OpenATHM.validateData(ATHMPayment);
+  } catch (Exception e) {
+      //Handle error
+  }
+  ```
+
+* If unexpected data is sent on the response of the payment the SDK will call the closure `onPaymentException` and you will get a title and a message that describes the error. Your application must be able to handle these errors.
+```java
+@Override
+    public void onPaymentException(String error, String description) {
+        //Handle error
+    }
+```
+
 #### Handle all payment responses.
 
-When a transaction is completed, canceled or expired a response is sent back to the URL scheme that was configured on the payment.
-
-Implement the PaymentResponseListener on the activity of the configured scheme.
+When a transaction is completed, canceled or expired a response is sent back to the URL scheme that was configured on the payment object. Implement the `PaymentResponseListener` on the activity of the configured scheme.
 ```java
 public class Activity extends AppCompatActivity
 implements PaymentResponseListener, View.OnClickListener {
 }
 ```
 
-On the OnCreate method of the activity call `PaymentResponse.validatePaymentResponse`
+On the `OnCreate` method of the activity call `PaymentResponse.validatePaymentResponse`
 
 ```java
 @Override
@@ -164,8 +212,10 @@ Handle the payment response with using the following methods:
 * Completed
 ```java
 @Override
-public void onCompletedPayment(String referenceNumber, Double total, Double tax, Double subtotal,
-                               String metadata1, String metadata2, ArrayList<Items> items) {
+public void onCompletedPayment(Date date, String referenceNumber, String dailyTransactionID,
+                            String name, String phoneNumber, String email,
+                            Double total, Double tax, Double subtotal,
+                            String metadata1, String metadata2, ArrayList<Items> items) {
 		//Handle response
 }
 ```
@@ -173,18 +223,30 @@ public void onCompletedPayment(String referenceNumber, Double total, Double tax,
 * Cancelled
 ```java
 @Override
-public void onCancelledPayment(String referenceNumber, Double total, Double tax, Double subtotal,
-                               String metadata1, String metadata2, ArrayList<Items> items) {
-		 //Handle response
+public void onCancelledPayment(Date date, String referenceNumber, String dailyTransactionID,
+                            String name, String phoneNumber, String email,
+                            Double total, Double tax, Double subtotal,
+                            String metadata1, String metadata2, ArrayList<Items> items) {
+		//Handle response
 }
 ```
 
 * Expired
 ```java
 @Override
-public void onExpiredPayment(String referenceNumber, Double total, Double tax, Double subtotal,
-                             String metadata1, String metadata2, ArrayList<Items> items) {
-		 //Handle response
+public void onExpiredPayment(Date date, String referenceNumber, String dailyTransactionID,
+                            String name, String phoneNumber, String email,
+                            Double total, Double tax, Double subtotal,
+                            String metadata1, String metadata2, ArrayList<Items> items) {
+		//Handle response
+}
+```
+
+* Exception
+```java
+@Override
+void onPaymentException(String error, String description){
+		//Handle response
 }
 ```
 
