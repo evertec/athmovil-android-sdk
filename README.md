@@ -1,4 +1,4 @@
-# ATH Móvil Payment Button - Android SDK
+# ATH Móvil Android SDK
 
 
 ## Introduction
@@ -12,7 +12,6 @@ Before you begin, please review the following prerequisites:
 3. Have the public and private API keys of your Business account at hand. **You can view your API keys on the settings section of ATH Móvil Business for iOS or Android.**
 
 
-## Support
 If you need help signing up, adding a card or have any other question please refer to https://athmovilbusiness.com/preguntas or contact our support team at (787) 773-5466. For technical support please complete the following form:  https://forms.gle/ZSeL8DtxVNP2K2iDA.
 
 
@@ -28,7 +27,7 @@ Before we get started, let’s configure your project:
 		}
 	}
 ```
-* Add the SDK and the GSON library to your application dependencies.
+* Add the Payment Button SDK and the GSON libraries to your application dependencies.
 ```java
 dependencies {
     …
@@ -41,7 +40,7 @@ dependencies {
 To integrate ATH Móvil’s Payment Button to your Android application follow these steps:
 
 ### XML
-Add the “Pay with ATH Móvil” button to your checkout XML view.
+Add the “Pay with ATH Móvil” button to your XML view.
 ```xml
 <com.evertecinc.athmovil.sdk.checkout.PayButton
     android:onClick="onClickPayButton"
@@ -87,16 +86,10 @@ Configure the activity where the payment response will be sent to on your manife
 #### Configure the payment.
 Add all required imports to the java file of your checkout screen.
 ```java
-import com.evertecinc.athmovil.sdk.checkout.exceptions.InvalidBusinessTokenException;
-import com.evertecinc.athmovil.sdk.checkout.exceptions.InvalidPurchaseTotalAmountException;
-import com.evertecinc.athmovil.sdk.checkout.exceptions.NullApplicationContextException;
-import com.evertecinc.athmovil.sdk.checkout.exceptions.NullCartReferenceIdException;
-import com.evertecinc.athmovil.sdk.checkout.exceptions.NullPurchaseDataObjectException;
-import com.evertecinc.athmovil.sdk.checkout.objects.ItemsSelected;
 import com.evertecinc.athmovil.sdk.checkout.OpenATHM;
+import com.evertecinc.athmovil.sdk.checkout.PayButton;
 import com.evertecinc.athmovil.sdk.checkout.objects.ATHMPayment;
-import com.evertecinc.athmovil.sdk.checkout.utils.ConstantUtil;
-import com.google.gson.Gson;
+import com.evertecinc.athmovil.sdk.checkout.objects.Items;
 ```
 
 Create an `ATHMPayment` object on the main class of the file.
@@ -107,8 +100,8 @@ ATHMPayment athmPayment = new ATHMPayment(this);
 Configure the payment values and execution on the onClick of the XML button that we recently created. Details of the methods used to configure the payment details are provided below.
 ```java
 public void onClickPayButton(View view) {
-	athmPayment.setCallbackSchema("scheme");
-	athmPayment.setPublicToken("fb1f7ae2849a07da1545a89d997d8a435a5f21ac");
+	athmPayment.setCallbackSchema("scheme"); //Replace this value with the Callback Schema of your app.
+	athmPayment.setPublicToken("fb1f7ae2849a07da1545a89d997d8a435a5f21ac"); //Replace this value with the Public Token of your ATH Móvil Business account.
 	athmPayment.setTimeout(600);
 	athmPayment.setTotal(1.00);
 	athmPayment.setSubtotal(1.00);
@@ -117,7 +110,7 @@ public void onClickPayButton(View view) {
 	athmPayment.setMetadata2("metadata2 test");
 	athmPayment.setItems(items);
 	athmPayment.setBuildType("");
-	sendData(purchaseData);
+	OpenATHM.validateData(payment, context);
 }
 ```
 
@@ -131,73 +124,76 @@ public void onClickPayButton(View view) {
 | `setMetadata1()` | String | No | Optional variable to attach data to the payment object. |
 | `setMetadata2()` | String | No | Optional variable to attach data to the payment object. |
 | `setItems()` | Array | No | Optional variable to display the items that the user is purchasing on ATH Móvil's payment screen. Items on the array are expected in the following order: (“name”, “desc”, "quantity", “price”, “metadata”) |
-| `setBuildType()` | String | Yes | Identifies the application's build type. Should always be configured as an empty string. ||
+| `setBuildType()` | String | Yes | Identifies the application's build type. `Should always be configured as an empty string.` ||
 
-* In the request make sure you comply with the following requirements for the `ATHMPayment` object, otherwise you will receive an exception on the callback:
+In the request make sure you comply with the following requirements for `ATHMPayment` object, otherwise you will receive an exception on the callback:
+
 | Variable  | Expeted Value |
 | ------------- |:-------------:|
 | `total` | Positive value |
 | `subtotal` | Positive value or zero |
 | `tax` | Positive value or zero |
-| `metadata1` | A string with characters, digits or spaces |
-| `metadata2` | A string with characters, digits or spaces |
-| `token` | A string with characters |
-| `urlScheme` | A string with characters. **Do not use the urlscheme in the example❗️** |
+| `metadata1` | Spaces, letters and numbers |
+| `metadata2` | Spaces, letters and numbers |
+| `publicToken` | String |
+| `callbackSchema` |String (**avoid using the callbackSchema provided in the example❗️**) |
 | `timeout` | Integer between 60 and 600 |
 
-* If you provide items in the request make sure you comply with these requirements for the `ATHMPaymentItem` object:
-| Variable  | Expeted Value |
-| ------------- |:-------------:|
-| `name` | A string with characters |
-| `price` | Positive value greater than zero |
-| `quantity` | Positive value greater than zero |
-| `metadata` | A string with characters, digits or spaces |
+If you provide items in the request make sure you comply with these requirements for the `ATHMPaymentItem` object:
 
-* *Note: the payment information and items on the response are the same objects that were received in the request. Values and data types are identical. The response includes the following additional variables:*
+| Variable  | Expected Value |
+| ------------- |:-------------:|
+| `name` | Spaces, letters and numbers |
+| `price` | Positive value greater than zero |
+| `description` | Spaces, letters and numbers |
+| `quantity` | Positive value greater than zero |
+| `metadata` | Spaces, letters and numbers |
+
+Note the request and items are the same objects in the response so the values and types are identical in request and response, but the response includes the following additional variables:
+
 | Variable  | Data Type | Description |
 | ------------- |:-------------:|------------- |
-| `dailyTransactionID` | Int | Daily ID of the transaction. If the transaction was cancelled o expired value will be 0. |
-| `referenceNumber` | String | Unique transaction identifier. If the transaction was cancelled o expired value will be 0. |
-| `date` | Date | Transaction's date. |
-| `name` | String | Name registered on ATH Móvil of user that paid for the transaction. |
-| `phoneNumber` | String | Phone number registered on ATH Móvil of user that paid for the transaction. |
-| `email` | String | 	Email address registered on ATH Móvil of user that paid for the transaction. |
+| `dailyTransactionID` | Int | Consecutive of the transaction, when the transaction is cancelled o expired the value will be zero. |
+| `referenceNumber` | String | Unique transaction identifier, when the transaction is cancelled o expired the value will be an empty string. |
+| `date` | Date | Date of Transaction. |
+| `name` | String | Name of customer. |
+| `phoneNumber` | String | Phone number of customer. |
+| `email` | String | Email of customer. |
 
-The SDK validates the information that is sent and received on all requests and responses.
+If there is unexpected data in the request or response the SDK will call the closure `onPaymentException` and you will get a title and a message with information of the error. Your application must manage these error cases. For example:
 
-* If unexpected data is sent on the request of the payment the SDK will throw an exception. Your application must be able to handle these exceptions.
-
-  * `NullATHMPaymentObjectException`: error returned when the `ATHMPayment` object is null.
-  * `NullApplicationContextException`: error returned when the initial application context is null.
-  * `InvalidPaymentRequestException`: error returned when request variables are invalid.
-  * `JsonEncoderException`: error returned when JSON encoding the request data fails.
-
-  ```java
-  try {
-      OpenATHM.validateData(ATHMPayment);
-  } catch (Exception e) {
-      //Handle error
-  }
-  ```
-
-* If unexpected data is sent on the response of the payment the SDK will call the closure `onPaymentException` and you will get a title and a message that describes the error. Your application must be able to handle these errors.
 ```java
 @Override
     public void onPaymentException(String error, String description) {
-        //Handle error
+        //handle the error
+    }
+```
+#### Validate the status of Pending Payments.
+In some error cases payment responses may not be sent back to your application, for example when end users close the ATH Móvil application from the multitasking view of their device in the middle of the payment process.
+
+To mitigate these cases you can implement a payment validator on the `onResume()` of your checkout view where the payment button logic was implemented (`OpenATHM.validateData (payment, context);`). This method verifies the status of the transaction if the payment process was interrupted. It can also be used anywhere you want to validate whether a payment was completed or cancelled. The method can take a maximum of 30 seconds to respond, so consider managing this wait time from a user experience perspective.
+
+```java
+@Override
+    protected void onResume() {
+        super.onResume();
+        // Manage a loader to wait for the response
+        showLoader();
+
+        // Call to validate transaction if payment process was interrupted
+        OpenATHM.verifyPaymentStatus(this);
     }
 ```
 
 #### Handle all payment responses.
-
-When a transaction is completed, canceled or expired a response is sent back to the URL scheme that was configured on the payment object. Implement the `PaymentResponseListener` on the activity of the configured scheme.
+When a transaction is completed, canceled or expired a response is sent back to the URL scheme that was configured on the payment. Implement the `PaymentResponseListener` on the activity of the configured scheme.
 ```java
 public class Activity extends AppCompatActivity
 implements PaymentResponseListener, View.OnClickListener {
 }
 ```
 
-On the `OnCreate` method of the activity call `PaymentResponse.validatePaymentResponse`
+On the OnCreate method of the activity call `PaymentResponse.validatePaymentResponse`
 
 ```java
 @Override
@@ -208,7 +204,7 @@ protected void onCreate(Bundle savedInstanceState) {
 }
 ```
 
-Handle the payment response with using the following methods:
+Handle the payment response using the following methods:
 * Completed
 ```java
 @Override
@@ -251,12 +247,19 @@ void onPaymentException(String error, String description){
 ```
 
 ## Testing
-* To test a "Completed" payment response set the value of  `ATHMPayment.setPublicToken` to:`ConstantUtil.TOKEN_FOR_SUCCESS`. When the "Pay with ATH Móvil " button is pressed an ATH Móvil instance will open and close instantly and a "Completed" payment response will be automatically sent to your app.
-* To test a "Cancelled" payment response set the value of  `ATHMPayment.setPublicToken` to:`ConstantUtil.TOKEN_FOR_FAILURE`. When the "Pay with ATH Móvil " button is pressed an ATH Móvil instance will open and close instantly and a "Cancelled" payment response will be automatically sent to your app.
-* To test an "Expired" payment response:
-	* Set the value of `ATHMPayment.setPublicToken` to your public token.
-	* Open the payment process.
-	* Wait for the payment to expire
+To test your Payment Button integration you can make payments in production using the Private and Public tokens of your ATH Móvil Business account or you can use the public token "dummy" to make simulated payments. When you use the token "dummy":
+* The ATH Movil production application will simulate a payment.
+* No end user credentials need to be provided to interact with the simulated payment.
+* Completed, cancelled and expired payments can be tested.
+
+```java
+public void onClickPayButton(View view) {
+    ...
+	athmPayment.setPublicToken("dummy");
+    ...
+	OpenATHM.validateData(payment, context);
+}
+```
 
 ## User Experience
 ![paymentux](paymentux.png)

@@ -1,16 +1,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
    <item
-       android:id="@+id/dev"
-       android:title="Development"/>
+       android:id="@+id/prod"
+       android:title="@string/production"
+       />
+    <item
+        android:id="@+id/plt"
+        android:title="@string/pilot"
+        />
     <item
         android:id="@+id/qa"
-        android:title="Quality"/>
+        android:title="@string/quality"/>
     <item
-        android:id="@+id/piloto"
-        android:title="Piloto"/>
-    <item
-        android:id="@+id/release"
-        android:title="Produccion"/>
-
+        android:id="@+id/dev"
+        android:title="@string/development"
+        />
 </menu>

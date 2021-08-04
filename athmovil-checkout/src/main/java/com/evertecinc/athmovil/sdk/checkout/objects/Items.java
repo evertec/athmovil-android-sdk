@@ -1,6 +1,6 @@
 package com.evertecinc.athmovil.sdk.checkout.objects;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.io.Serializable;
 
@@ -9,15 +9,15 @@ import java.io.Serializable;
  */
 public class Items implements Serializable {
     private String name;
-    private String desc;
+    private String description;
     private Double price;
     private Long quantity;
     private String metadata;
 
-    public Items(@NonNull String name, @NonNull String desc, @NonNull Double price,
+    public Items(@NonNull String name, String description, @NonNull Double price,
                  @NonNull Long quantity, String metadata) {
         this.name = name;
-        this.desc = desc;
+        this.description = description;
         this.price = price;
         this.quantity = quantity;
         this.metadata = metadata;
@@ -27,8 +27,8 @@ public class Items implements Serializable {
         return name;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getDescription() {
+        return description;
     }
 
     public Double getPrice() {
@@ -47,8 +47,8 @@ public class Items implements Serializable {
         this.name = name;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public void setMetadata(String metadata) {

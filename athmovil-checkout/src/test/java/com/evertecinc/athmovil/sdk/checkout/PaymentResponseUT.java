@@ -39,7 +39,7 @@ public class PaymentResponseUT {
         verify(listener, only()).onCancelledPayment(Util.getDateFormat(result.getDate()), result.getReferenceNumber(), result.getDailyTransactionID(),
                 result.getName(), result.getPhoneNumber(), result.getEmail(),
                 result.getTotal(), result.getTax(), result.getSubtotal(), result.getFee(), result.getNetAmount(),
-                result.getMetadata1(), result.getMetadata2(), result.getItemsSelectedList());
+                result.getMetadata1(), result.getMetadata2(), result.getPaymentId(), result.getItemsSelectedList());
     }
 
     @Test
@@ -49,7 +49,7 @@ public class PaymentResponseUT {
         verify(listener, only()).onExpiredPayment(Util.getDateFormat(result.getDate()), result.getReferenceNumber(), result.getDailyTransactionID(),
                 result.getName(), result.getPhoneNumber(), result.getEmail(),
                 result.getTotal(), result.getTax(), result.getSubtotal(), result.getFee(), result.getNetAmount(),
-                result.getMetadata1(), result.getMetadata2(), result.getItemsSelectedList());
+                result.getMetadata1(), result.getMetadata2(), result.getPaymentId(), result.getItemsSelectedList());
     }
 
     @Test
@@ -59,7 +59,7 @@ public class PaymentResponseUT {
         verify(listener, only()).onCompletedPayment(Util.getDateFormat(result.getDate()), result.getReferenceNumber(), result.getDailyTransactionID(),
                 result.getName(), result.getPhoneNumber(), result.getEmail(),
                 result.getTotal(), result.getTax(), result.getSubtotal(), result.getFee(), result.getNetAmount(),
-                result.getMetadata1(), result.getMetadata2(), result.getItemsSelectedList());
+                result.getMetadata1(), result.getMetadata2(), result.getPaymentId(), result.getItemsSelectedList());
     }
 
     @Test

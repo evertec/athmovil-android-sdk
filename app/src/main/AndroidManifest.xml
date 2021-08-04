@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.evertecinc.athmovil.sdk">
-
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
-        android:name = ".App"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:fullBackupContent="false">
-
         <activity
-            android:name=".CheckoutCartExampleActivity"
-            android:windowSoftInputMode="stateAlwaysHidden"
-            >
+            android:name=".MainActivity"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
         </activity>
+
+        <activity android:name=".CartActivity" />
+
+        <activity android:name=".ConfigActivity" />
+
         <activity
-            android:name=".CheckoutResultsExampleActivity"
-            >
+            android:name=".PaymentResponseActivity">
             <intent-filter>
+                <!--Schema with app bundle Configuration-->
                 <action android:name="com.evertecinc.athmovil.sdk.ATHMSDK" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name=".ItemsListActivity" />
     </application>
 </manifest>
