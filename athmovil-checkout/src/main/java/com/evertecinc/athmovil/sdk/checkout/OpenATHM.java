@@ -49,7 +49,6 @@ import static com.evertecinc.athmovil.sdk.checkout.utils.ConstantUtil.COM_EVERTE
  */
 public class OpenATHM {
 
-    //TODO: For Evertec Test Only
     static PostService postsService;
 
     /**
