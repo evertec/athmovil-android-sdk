@@ -1,20 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
-
-    <color name="light_orange">#FB8C00</color>
-    <color name="orange">#F57C00</color>
-    <color name="dark_orange">#ef6c00</color>
-
-    <color name="pure_white">#FFFFFF</color>
-
-    <color name="background">#F9F9F9</color>
-
-    <color name="primaryBlack">#202020</color>
+    <color name="colorPrimary">#ffffff</color>
+    <color name="colorPrimaryDark">#ffffff</color>
+    <color name="colorAccent">#000000</color>
+    <color name="app_background">#f9f9f9</color>
+    <color name="dividers">#d0d0d0</color>
     <color name="secondaryBlack">#747474</color>
-    <color name="disabledBlack">#9E9E9E</color>
-    <color name="borderBlack">#d0d0d0</color>
-    <color name="dividers">#adadad</color>
+    <color name="background">#f9f9f9</color>
+
+    <color name="ic_launcher_background">#000000</color>
+
 </resources>

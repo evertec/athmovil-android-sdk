@@ -4,11 +4,12 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.AppCompatImageButton;
+import androidx.core.view.ViewCompat;
+import androidx.appcompat.widget.AppCompatImageButton;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
 public class PayButton extends AppCompatImageButton {
 
     final static String SPANISH_LANGUAGE_CODE = "es";
@@ -66,15 +67,13 @@ public class PayButton extends AppCompatImageButton {
     protected void onDraw(final Canvas canvas) {
         super.onDraw(canvas);
         switch (selectedTheme) {
-            case ORIGINAL:
-                setOriginalButton();
-                break;
             case LIGHT:
                 setLightButton();
                 break;
             case DARK:
                 setDarkButton();
                 break;
+            case ORIGINAL:
             default:
                 setOriginalButton();
                 break;
@@ -103,6 +102,9 @@ public class PayButton extends AppCompatImageButton {
             case ES:
                 setImageDrawable(getResources().getDrawable(R.drawable.athm_white_es));
                 break;
+            case DEFAULT:
+            default:
+                break;
         }
         ViewCompat.setBackgroundTintList(this, ColorStateList.valueOf(getResources().
                 getColor(R.color.orange_button)));
@@ -118,6 +120,9 @@ public class PayButton extends AppCompatImageButton {
             case ES:
                 setImageDrawable(getResources().getDrawable(R.drawable.athm_black_es));
                 break;
+            case DEFAULT:
+            default:
+                break;
         }
         ViewCompat.setBackgroundTintList(this, ColorStateList.valueOf(getResources().
                 getColor(R.color.light_button)));
@@ -132,6 +137,9 @@ public class PayButton extends AppCompatImageButton {
                 break;
             case ES:
                 setImageDrawable(getResources().getDrawable(R.drawable.athm_white_es));
+                break;
+            case DEFAULT:
+            default:
                 break;
         }
         ViewCompat.setBackgroundTintList(this, ColorStateList.valueOf(getResources().

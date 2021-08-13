@@ -3,8 +3,7 @@ package com.evertecinc.athmovil.sdk.checkout.utils;
 import com.evertecinc.athmovil.sdk.checkout.objects.ATHMPayment;
 import com.evertecinc.athmovil.sdk.checkout.objects.Items;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
 
 public class ExceptionUtil {
 
@@ -22,54 +21,97 @@ public class ExceptionUtil {
         if (request.getPublicToken() == null || request.getPublicToken().trim().isEmpty()) {
             setExceptionMessage(ConstantUtil.NULL_PUBLICTOKEN_LOG_MESSAGE);
             return false;
-        } else if (request.getSubtotal() < 0) {
-            setExceptionMessage(ConstantUtil.SUBTOTAL_ERROR_LOG_MESSAGE);
+        } else if (!validateItems(request.getItems()) ||
+                !validateDataFields(exceptionMessage) ||
+                !validateAmountFields(request.getSubtotal(), request.getTotal(), request.getTax())
+                || !validateMetadataFields(request.getMetadata1(), request.getMetadata2())
+                || !validateTokenSchema(request.getPublicToken(), request.getCallbackSchema())) {
             return false;
-        } else if (request.getTotal() < 1) {
-            setExceptionMessage(ConstantUtil.TOTAL_ERROR_LOG_MESSAGE);
-            return false;
-        } else if (request.getMetadata1() != null && !request.getMetadata1().isEmpty() &&
-                !request.getMetadata1().equals("") && validateMetadata(request.getMetadata1())) {
-            setExceptionMessage(ConstantUtil.NULL_METADATA_LOG_MESSAGE);
-            return false;
-        } else if (request.getTax() < 0) {
-            setExceptionMessage(ConstantUtil.TAX_NULL_LOG_MESSAGE);
-            return false;
-        } else if (request.getCallbackSchema() == null || request.getCallbackSchema().trim().isEmpty()) {
-            setExceptionMessage(ConstantUtil.SCHEMA_ERROR_MESSAGE);
-            return false;
-        } else if (request.getMetadata2() != null && !request.getMetadata2().isEmpty() &&
-                !request.getMetadata2().equals("") && validateMetadata(request.getMetadata2())) {
-            setExceptionMessage(ConstantUtil.NULL_METADATA_LOG_MESSAGE);
-            return false;
-        } else if (request.getItems() != null) {
-            for (Items item : request.getItems()) {
-                if (item.getName() == null || item.getName().trim().isEmpty() || item.getName().equals("")) {
-                    setExceptionMessage(ConstantUtil.ITEM_NAME_ERROR_LOG_MESSAGE);
+        }
+        return true;
+    }
+
+    public boolean validateItems(ArrayList<Items> items) {
+        if (items != null) {
+            for (Items item : items) {
+                if (!validateItemName(item.getName()) ||
+                        !validateItemPrice(item.getPrice()) ||
+                        !validateItemQuantity(item.getQuantity())) {
                     return false;
-                } else if (item.getPrice() <= 0) {
-                    setExceptionMessage(ConstantUtil.ITEM_TOTAL_ERROR_LOG_MESSAGE);
-                    return false;
-                } else if (item.getQuantity() <= 0) {
-                    setExceptionMessage(ConstantUtil.ITEM_QUANTITY_ERROR_LOG_MESSAGE);
-                    return false;
-                } else if (item.getMetadata() != null && !item.getMetadata().isEmpty()) {
-                    if (item.getMetadata().trim().isEmpty() || validateMetadata(item.getMetadata())) {
-                        setExceptionMessage(ConstantUtil.NULL_ITEM_METADATA_LOG_MESSAGE);
-                        return false;
-                    }
                 }
             }
         }
         return true;
     }
 
-    public boolean validateMetadata(String metadata) {
-        metadata = metadata.replaceAll("\\s", "");
-        if(metadata.equals(""))
+    public boolean validateItemName(String name) {
+        if (name == null || name.trim().isEmpty() || name.equals("")) {
+            setExceptionMessage(ConstantUtil.ITEM_NAME_ERROR_LOG_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    public boolean validateItemPrice(Double price) {
+        if (price <= 0) {
+            setExceptionMessage(ConstantUtil.ITEM_TOTAL_ERROR_LOG_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    public boolean validateItemQuantity(Long quantity) {
+        if (quantity <= 0) {
+            setExceptionMessage(ConstantUtil.ITEM_QUANTITY_ERROR_LOG_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    public boolean validateDataFields(String exceptionMessage) {
+        if (exceptionMessage != null) {
+            setExceptionMessage(ConstantUtil.PAYMENT_VALIDATION_FAILED);
+            return false;
+        } else {
             return true;
-        Pattern p = Pattern.compile("[^A-Za-z0-9]", Pattern.CASE_INSENSITIVE);
-        Matcher m = p.matcher(metadata);
-        return m.find();
+        }
+    }
+
+    public boolean validateAmountFields(double subTotal, double total, double tax) {
+        if (subTotal < 0) {
+            setExceptionMessage(ConstantUtil.SUBTOTAL_ERROR_LOG_MESSAGE);
+            return false;
+        } else if (total < 1) {
+            setExceptionMessage(ConstantUtil.TOTAL_ERROR_LOG_MESSAGE);
+            return false;
+        } else if (tax < 0) {
+            setExceptionMessage(ConstantUtil.TAX_NULL_LOG_MESSAGE);
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public boolean validateMetadataFields(String metadata1, String metadata2) {
+        if (metadata1 != null && metadata1.length() > 40) {
+            setExceptionMessage(ConstantUtil.METADATA_ERROR_MESSAGE);
+            return false;
+        } else if (metadata2 != null && metadata2.length() > 40) {
+            setExceptionMessage(ConstantUtil.METADATA2_ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    public boolean validateTokenSchema(String token, String schema) {
+        if (token == null || token.trim().isEmpty()) {
+            setExceptionMessage(ConstantUtil.NULL_PUBLICTOKEN_LOG_MESSAGE);
+            return false;
+        } else if (schema == null || schema.trim().isEmpty()) {
+            setExceptionMessage(ConstantUtil.SCHEMA_ERROR_MESSAGE);
+            return false;
+        } else {
+            return true;
+        }
     }
 }

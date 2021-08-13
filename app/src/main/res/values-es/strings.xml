@@ -1,0 +1,60 @@
+<resources>
+    <string name="app_name">ATHM SDK Demo</string>
+    <string name="action_settings">Configuración</string>
+    <string name="items">Artículos</string>
+    <string name="image_content_description">imagen</string>
+    <string name="shirt">Camisas</string>
+    <string name="pants">Pantalones</string>
+    <string name="shoes">Zapatos</string>
+    <string name="go_to_cart">Ir al Carrito</string>
+
+    <string name="cart">Carrito</string>
+    <string name="contact">Contacto</string>
+    <string name="shipping">Envío</string>
+    <string name="subtotal">Subtotal</string>
+    <string name="tax">Impuesto</string>
+    <string name="total">Total</string>
+    <string name="other_payment_methdod">Otro Metodo de Pago</string>
+
+    <string name="payment_config">Configuración del Pago</string>
+    <string name="config">Configuración</string>
+    <string name="public_token">Token Público</string>
+    <string name="timeout">Tiempo de Duración</string>
+    <string name="payment_amount">Cantidad del Pago</string>
+    <string name="theme">Tema</string>
+
+    <string name="build_type">Ambiente</string>
+    <string name="production">Produccion</string>
+    <string name="quality">Calidad</string>
+    <string name="pilot">Piloto</string>
+    <string name="development">Desarrollo</string>
+
+    <string name="configuration_message">El pago se enviará a la cuenta del token público proporcionado por el monto de pago proporcionado. Ingrese "dummy" en el token para simular el pago.</string>
+    <string name="optional_parameters">Parametros Opcionales</string>
+    <string name="metadata_1">Metadatos1</string>
+    <string name="metadata_2">Metadatos2</string>
+
+    <string name="cancel">Cancelar</string>
+    <string name="ok">OK</string>
+
+    <string name="public_token_alert_title">Cambiar el Token Publico</string>
+    <string name="public_token_alert_message">Provee el token de la cuenta que recibira el pago.</string>
+
+    <string name="timeout_alert_title">Cambiar el Tiempo de Espera</string>
+    <string name="timeout_alert_message">Provee un tiempo de espera para el proceso de pago en segundos.</string>
+
+    <string name="payment_alert_title">Cambiar la Cantidad del Pago</string>
+    <string name="payment_alert_message">Provee la cantidad por la que se procesara el pago.</string>
+
+    <string name="close">Cerrar</string>
+    <string name="payment_response">Respuesta del Pago</string>
+
+    <string name="status">Estado</string>
+    <string name="reference_number">Numero de Referencia</string>
+
+    <string name="ATHM_COMPLETED_STATUS">COMPLETED</string>
+    <string name="ATHM_CANCELLED_STATUS">CANCELED</string>
+    <string name="ATHM_EXPIRED_STATUS">EXPIRED</string>
+    <string name="ATHM_NOTFOUND_STATUS">NOT FOUND</string>
+
+</resources>

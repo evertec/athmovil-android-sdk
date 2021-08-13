@@ -19,9 +19,13 @@ public class PaymentReturnedData {
     private double netAmount;
     private String metadata1;
     private String metadata2;
+    private String paymentId;
     private ArrayList<Items> items = new ArrayList<>();
 
     public String getDailyTransactionID() {
+        if(dailyTransactionID != null) {
+        dailyTransactionID =  trimLeadingZeros(dailyTransactionID);
+        }
         return dailyTransactionID;
     }
 
@@ -83,7 +87,11 @@ public class PaymentReturnedData {
     }
 
     public String getStatus() {
-        return status;
+        if (status != null){
+            return status.toUpperCase();
+        }else {
+            return status;
+        }
     }
 
     public void setStatus(String status) {
@@ -138,6 +146,14 @@ public class PaymentReturnedData {
         this.metadata2 = metaData2;
     }
 
+    public String getPaymentId() {
+        return paymentId;
+    }
+
+    public void setPaymentId(String paymentId) {
+        this.paymentId = paymentId;
+    }
+
     public ArrayList<Items> getItemsSelectedList() {
         return new ArrayList<>(items);
     }
@@ -173,6 +189,16 @@ public class PaymentReturnedData {
         return Objects.hash(referenceNumber, status, subtotal, total,
                 tax, metadata1, metadata2, items, date, dailyTransactionID,
                 name, phoneNumber, email, fee, netAmount);
+    }
+
+    public static String trimLeadingZeros(String source) {
+        for (int i = 0; i < source.length(); ++i) {
+            char c = source.charAt(i);
+            if (c != '0') {
+                return source.substring(i);
+            }
+        }
+        return "0";
     }
 
 }
