@@ -27,12 +27,17 @@ Before we get started, let’s configure your project:
 		}
 	}
 ```
-* Add the Payment Button SDK and the GSON libraries to your application dependencies.
+* Add the Payment Button SDK and the application dependencies.
 ```java
 dependencies {
     …
-    implementation 'com.github.evertec:athmovil-android-sdk:3.0.0'
-	implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.github.evertec:athmovil-android-sdk:4.0.0'
+    implementation 'androidx.annotation:annotation:1.2.0'
+	implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
 }
 ```
 
@@ -71,7 +76,9 @@ Add the “Pay with ATH Móvil” button to your XML view.
 Configure the activity where the payment response will be sent to on your manifest.
 (**Note: If your app targets Android 11 (API Level 30) or higher, you must include the QUERY_ALL_PACKAGES permission❗️**)
 
-```java
+```xml
+<uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>
+...
 <activity
     android:name=".Activity">
     <intent-filter>
@@ -101,7 +108,7 @@ ATHMPayment athmPayment = new ATHMPayment(this);
 Configure the payment values and execution on the onClick of the XML button that we recently created. Details of the methods used to configure the payment details are provided below.
 ```java
 public void onClickPayButton(View view) {
-	athmPayment.setCallbackSchema("scheme"); //Replace this value with the Callback Schema of your app.
+	athmPayment.setCallbackSchema("schema"); //Replace this value with the Callback Schema of your app.
 	athmPayment.setPublicToken("fb1f7ae2849a07da1545a89d997d8a435a5f21ac"); //Replace this value with the Public Token of your ATH Móvil Business account.
 	athmPayment.setTimeout(600);
 	athmPayment.setTotal(1.00);
@@ -118,6 +125,7 @@ public void onClickPayButton(View view) {
 | Method  | Data Type | Required | Description |
 | ------------- |:-------------:|:-----:| ------------- |
 | `setPublicToken()` | String | Yes | Determines the Business account where the payment will be sent to. |
+| `setCallbackSchema()` | String | Yes | Schema configuration name of manifest. 
 | `setTimeout()` | Long | No | Expires the payment process if the payment hasn't been completed by the user after the provided amount of time (in seconds). Countdown starts immediately after the user presses the Payment Button. Default value is set to 600 seconds (10 mins). |
 | `setTotal()` | Double | Yes | Total amount to be paid by the end user. |
 | `setSubtotal()` | Double | No | Optional  variable to display the payment subtotal (if applicable) |
@@ -134,8 +142,8 @@ In the request make sure you comply with the following requirements for `ATHMPay
 | `total` | Positive value |
 | `subtotal` | Positive value or zero |
 | `tax` | Positive value or zero |
-| `metadata1` | Spaces, letters and numbers |
-| `metadata2` | Spaces, letters and numbers |
+| `metadata1` | Spaces, letters and numbers, max length 40 |
+| `metadata2` | Spaces, letters and numbers, max length 40 |
 | `publicToken` | String |
 | `callbackSchema` |String (**avoid using the callbackSchema provided in the example❗️**) |
 | `timeout` | Integer between 60 and 600 |
@@ -160,6 +168,8 @@ Note the request and items are the same objects in the response so the values an
 | `name` | String | Name of customer. |
 | `phoneNumber` | String | Phone number of customer. |
 | `email` | String | Email of customer. |
+| `fee` | Double | Fee paid in the transaction. |
+| `netAmount` | Double | Total amount paid by the end user without the fee. |
 
 If there is unexpected data in the request or response the SDK will call the closure `onPaymentException` and you will get a title and a message with information of the error. Your application must manage these error cases. For example:
 
@@ -190,11 +200,10 @@ To mitigate these cases you can implement a payment validator on the `onResume()
 When a transaction is completed, canceled or expired a response is sent back to the URL scheme that was configured on the payment. Implement the `PaymentResponseListener` on the activity of the configured scheme.
 ```java
 public class Activity extends AppCompatActivity
-implements PaymentResponseListener, View.OnClickListener {
-}
+implements PaymentResponseListener {}
 ```
 
-On the OnCreate method of the activity call `PaymentResponse.validatePaymentResponse`
+On the onCreate method of the activity (configured in the manifest for the callback) call `PaymentResponse.validatePaymentResponse`
 
 ```java
 @Override
