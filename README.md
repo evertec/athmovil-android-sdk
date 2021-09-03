@@ -27,17 +27,43 @@ Before we get started, let’s configure your project:
 		}
 	}
 ```
-* Add the Payment Button SDK and the application dependencies.
+
+* Add the Payment Button SDK dependency.
 ```java
 dependencies {
     …
     implementation 'com.github.evertec:athmovil-android-sdk:4.0.0'
+}
+```
+
+* Add the Payment Button SDK application dependencies.
+```java
+dependencies {
+    …
     implementation 'androidx.annotation:annotation:1.2.0'
 	implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
+}
+```
+
+* Install the Payment Button SDK as an .aar (Optional). 
+Download the athmovil-checkout-release.aar file which is located in the libs folder. 
+Copy it to a folder called libs in your project and add it as a dependency
+
+```java
+//Add everything that is in libs (optional)
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+//Or add the direct dependency
+dependencies {
+    …
+    releaseImplementation files('../libs/athmovil-checkout-release.aar')
 }
 ```
 
@@ -184,7 +210,7 @@ In some error cases payment responses may not be sent back to your application, 
 
 To mitigate these cases you can implement a payment validator on the `onResume()` of your checkout view where the payment button logic was implemented (`OpenATHM.validateData (payment, context);`). This method verifies the status of the transaction if the payment process was interrupted. It can also be used anywhere you want to validate whether a payment was completed or cancelled. The method can take a maximum of 30 seconds to respond, so consider managing this wait time from a user experience perspective.
 
-```java
+```java                
 @Override
     protected void onResume() {
         super.onResume();
