@@ -156,8 +156,8 @@ public void onClickPayButton(View view) {
 | `setTotal()` | Double | Yes | Total amount to be paid by the end user. |
 | `setSubtotal()` | Double | No | Optional  variable to display the payment subtotal (if applicable) |
 | `setTax()` | Double | No | Optional variable to display the payment tax (if applicable). |
-| `setMetadata1()` | String | No | Optional variable to attach data to the payment object. |
-| `setMetadata2()` | String | No | Optional variable to attach data to the payment object. |
+| `setMetadata1()` | String | Yes | Optional variable to attach data to the payment object. |
+| `setMetadata2()` | String | Yes | Optional variable to attach data to the payment object. |
 | `setItems()` | Array | No | Optional variable to display the items that the user is purchasing on ATH Móvil's payment screen. Items on the array are expected in the following order: (“name”, “desc”, "quantity", “price”, “metadata”) |
 | `setBuildType()` | String | Yes | Identifies the application's build type. `Should always be configured as an empty string.` ||
 
