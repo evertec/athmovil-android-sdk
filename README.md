@@ -99,8 +99,7 @@ Add the “Pay with ATH Móvil” button to your XML view.
 
 ----
 ### Manifest
-Configure the activity where the payment response will be sent to on your manifest.
-
+Configure the activity where the payment response will be sent to on your manifest.(Note: You no longer need to add the QUERY _ALL_PACKAGES permission, Now you need to add the packaged mentioned below)
 
 ```xml
 <queries>
