@@ -10,7 +10,7 @@
         tools:context=".ConfigActivity"
         tools:ignore="SpUsage"
         >
-        <com.google.android.material.appbar.AppBarLayout
+        <android.support.design.widget.AppBarLayout
             android:id="@+id/appBar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -44,7 +44,7 @@
                     android:layout_marginEnd="2dp"
                     />
             </RelativeLayout>
-        </com.google.android.material.appbar.AppBarLayout>
+        </android.support.design.widget.AppBarLayout>
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -287,6 +287,50 @@
                         android:layout_marginStart="16dp"
                         />
                 </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/llFlowTypeContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/ripple_background_white_rectangle"
+                    android:clickable="true"
+                    android:focusable="true"
+                    >
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_margin="16dp"
+                        android:gravity="center"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/flow_type"
+                            android:textColor="@color/colorAccent"
+                            android:textSize="16dp"
+                            />
+
+                        <TextView
+                            android:id="@+id/tvFlowType"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/secondaryBlack"
+                            android:textSize="14dp"
+                            android:layout_gravity="end"
+                            android:layout_weight="1"
+                            android:layout_marginStart="16dp"
+                            android:text="@string/si_string"
+                            android:gravity="end"
+                            />
+                    </LinearLayout>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/dividers"
+                        android:layout_marginStart="16dp"
+                        />
+                </LinearLayout>
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -468,6 +512,51 @@
 
                         <TextView
                             android:id="@+id/tvMetadata2"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/secondaryBlack"
+                            android:textSize="14dp"
+                            android:layout_gravity="end"
+                            android:layout_weight="1"
+                            android:layout_marginStart="16dp"
+                            android:text=""
+                            android:gravity="end"
+
+                            />
+                    </LinearLayout>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/dividers"
+                        android:layout_marginStart="16dp"
+                        />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/llPhoneNumberContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/ripple_background_white_rectangle"
+                    android:clickable="true"
+                    android:focusable="true"
+                    >
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_margin="16dp"
+                        android:gravity="center"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/phone_number"
+                            android:textColor="@color/colorAccent"
+                            android:textSize="16dp"
+                            />
+
+                        <TextView
+                            android:id="@+id/tvPhoneNumber"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:textColor="@color/secondaryBlack"

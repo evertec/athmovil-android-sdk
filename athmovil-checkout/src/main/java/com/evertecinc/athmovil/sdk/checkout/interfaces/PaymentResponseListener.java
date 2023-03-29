@@ -22,5 +22,11 @@ public interface PaymentResponseListener {
                           Double total, Double tax, Double subtotal, Double fee, Double netAmount,
                           String metadata1, String metadata2, String paymentId, ArrayList<Items> items);
 
+    void onFailedPayment(Date date, String referenceNumber, String dailyTransactionID,
+                          String name, String phoneNumber, String email,
+                          Double total, Double tax, Double subtotal, Double fee, Double netAmount,
+                          String metadata1, String metadata2, String paymentId, ArrayList<Items> items);
+
     void onPaymentException(String error, String description);
+
 }

@@ -2,15 +2,20 @@
 
 
 ## Introduction
-ATH Móvil's Payment Button SDK provides a simple, secure and fast checkout experience to customers paying on your Android application. After integrating our Payment Button on your app you will be able to receive real time payments from more than 1.5 million ATH Móvil users.
+The ATH Móvil SDK provides a simple, secure and fast checkout experience to customers paying on your Android application. After integrating our Payment Button on your app you will be able to receive instant payments from more than a million ATH Móvil users.
 
 
 ## Prerequisites
 Before you begin, please review the following prerequisites:
-1. An active ATH Móvil Business account is required to continue. To sign up, download "ATH Móvil Business" on the App Store or Play Store of your iOS or Android device.
-2. Your ATH Móvil Business account needs to have a registered, verified and active ATH® card.
-3. Have the public and private API keys of your Business account at hand. **You can view your API keys on the settings section of ATH Móvil Business for iOS or Android.**
 
+1. An active ATH Móvil Business account is required to continue.
+ * Note: *To sign up, download "ATH Móvil Business" on the App Store if you have an iOS device or on the Play Store if you have an Android device.*
+
+
+2. Your ATH Móvil Business account needs to have a registered, verified and active ATH® card.
+
+3. Have the public and private API keys of your Business account at hand.
+ * Note: ***You can view your API keys on the settings section of the ATH Móvil Business application for iOS or Android.***
 
 If you need help signing up, adding a card or have any other question please refer to https://athmovilbusiness.com/preguntas or contact our support team at (787) 773-5466. For technical support please complete the following form:  https://forms.gle/ZSeL8DtxVNP2K2iDA.
 
@@ -27,43 +32,12 @@ Before we get started, let’s configure your project:
 		}
 	}
 ```
-
-* Add the Payment Button SDK dependency.
+* Add the SDK and the GSON library to your application dependencies.
 ```java
 dependencies {
     …
-    implementation 'com.github.evertec:athmovil-android-sdk:4.0.0'
-}
-```
-
-* Add the Payment Button SDK application dependencies.
-```java
-dependencies {
-    …
-    implementation 'androidx.annotation:annotation:1.2.0'
-	implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'com.google.android.material:material:1.4.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
-}
-```
-
-* Install the Payment Button SDK as an .aar (Optional). 
-Download the athmovil-checkout-release.aar file which is located in the libs folder. 
-Copy it to a folder called libs in your project and add it as a dependency
-
-```java
-//Add everything that is in libs (optional)
-repositories {
-    flatDir {
-        dirs 'libs'
-    }
-}
-//Or add the direct dependency
-dependencies {
-    …
-    releaseImplementation files('../libs/athmovil-checkout-release.aar')
+    implementation 'com.github.evertec:athmovil-android-sdk:3.0.0'
+	implementation 'com.google.code.gson:gson:2.8.2'
 }
 ```
 
@@ -71,7 +45,7 @@ dependencies {
 To integrate ATH Móvil’s Payment Button to your Android application follow these steps:
 
 ### XML
-Add the “Pay with ATH Móvil” button to your XML view.
+Add the “Pay with ATH Móvil” button to your checkout XML view.
 ```xml
 <com.evertecinc.athmovil.sdk.checkout.PayButton
     android:onClick="onClickPayButton"
@@ -99,13 +73,9 @@ Add the “Pay with ATH Móvil” button to your XML view.
 
 ----
 ### Manifest
-Configure the activity where the payment response will be sent to on your manifest.(Note: You no longer need to add the QUERY _ALL_PACKAGES permission, Now you need to add the packaged mentioned below)
+Configure the activity where the payment response will be sent to on your manifest.
 
-```xml
-<queries>
-    <package android:name="com.evertec.athmovil.android" />
-</queries>
-...
+```java
 <activity
     android:name=".Activity">
     <intent-filter>
@@ -132,11 +102,13 @@ Create an `ATHMPayment` object on the main class of the file.
 ATHMPayment athmPayment = new ATHMPayment(this);
 ```
 
-Configure the payment values and execution on the onClick of the XML button that we recently created. Details of the methods used to configure the payment details are provided below.
+Configure the payment values and execution on the onClick of the XML button that we recently created. *Details of the methods used to configure the payment details are provided below.*
 ```java
 public void onClickPayButton(View view) {
-	athmPayment.setCallbackSchema("schema"); //Replace this value with the Callback Schema of your app.
-	athmPayment.setPublicToken("fb1f7ae2849a07da1545a89d997d8a435a5f21ac"); //Replace this value with the Public Token of your ATH Móvil Business account.
+    // CallbackSchema example, this should be changed with your application CallbackSchema.
+	athmPayment.setCallbackSchema("scheme"); 
+    // PublicToken example, this should be changed with your public token.
+	athmPayment.setPublicToken("fb1f7ae2849a07da1545a89d997d8a435a5f21ac"); 
 	athmPayment.setTimeout(600);
 	athmPayment.setTotal(1.00);
 	athmPayment.setSubtotal(1.00);
@@ -145,6 +117,13 @@ public void onClickPayButton(View view) {
 	athmPayment.setMetadata2("metadata2 test");
 	athmPayment.setItems(items);
 	athmPayment.setBuildType("");
+
+    //In case the customer number exists, replace this value
+    athmPayment.setPhoneNumber("4052955384");
+
+    //If you want to activate the new payment flow, set to true
+    athmPayment.setNewFlow(true);
+
 	OpenATHM.validateData(payment, context);
 }
 ```
@@ -152,53 +131,52 @@ public void onClickPayButton(View view) {
 | Method  | Data Type | Required | Description |
 | ------------- |:-------------:|:-----:| ------------- |
 | `setPublicToken()` | String | Yes | Determines the Business account where the payment will be sent to. |
-| `setCallbackSchema()` | String | Yes | Schema configuration name of manifest. 
 | `setTimeout()` | Long | No | Expires the payment process if the payment hasn't been completed by the user after the provided amount of time (in seconds). Countdown starts immediately after the user presses the Payment Button. Default value is set to 600 seconds (10 mins). |
 | `setTotal()` | Double | Yes | Total amount to be paid by the end user. |
 | `setSubtotal()` | Double | No | Optional  variable to display the payment subtotal (if applicable) |
 | `setTax()` | Double | No | Optional variable to display the payment tax (if applicable). |
-| `setMetadata1()` | String | Yes | Required variable that can be left empty or filled with additional transaction information. Max length 40 characters. |
-| `setMetadata2()` | String | Yes | Required variable that can be left empty or filled with additional transaction information. Max length 40 characters. |
+| `setMetadata1()` | String | No | Optional variable to attach data to the payment object. |
+| `setMetadata2()` | String | No | Optional variable to attach data to the payment object. |
 | `setItems()` | Array | No | Optional variable to display the items that the user is purchasing on ATH Móvil's payment screen. Items on the array are expected in the following order: (“name”, “desc”, "quantity", “price”, “metadata”) |
-| `setBuildType()` | String | Yes | Identifies the application's build type. `Should always be configured as an empty string.` ||
+| `setBuildType()` | String | Yes | Identifies the application's build type. `Should always be configured as an empty string.` |
+| `setPhoneNumber()` | String | NO | Identify the customer's phone number. `Should always be configured as an empty string.` |
+| `setNewFlow()` | Boolean | Yes | Identifies if the payment is made from the new flow. `By default it will have the value false.` ||
 
-In the request make sure you comply with the following requirements for `ATHMPayment` object, otherwise you will receive an exception on the callback:
+In the request you must make sure that you are following the next rules for the payment ATHMPayment object otherwise you will receive an exception on the callback
 
 | Variable  | Expeted Value |
 | ------------- |:-------------:|
 | `total` | Positive value |
 | `subtotal` | Positive value or zero |
 | `tax` | Positive value or zero |
-| `metadata1` | Spaces, letters and numbers, max length 40 |
-| `metadata2` | Spaces, letters and numbers, max length 40 |
-| `publicToken` | String |
-| `callbackSchema` |String (**avoid using the callbackSchema provided in the example❗️**) |
-| `timeout` | Integer between 60 and 600 |
+| `metadata1` | Only allows space, letters and numbers |
+| `metadata2` | Only allows space, letters and numbers |
+| `publicToken` | A string with characters |
+| `callbackSchema` | A string with characters, `avoid to use the callbackSchema of the example` | 
+| `timeout` | Integer between 60 and 600 | 
 
-If you provide items in the request make sure you comply with these requirements for the `ATHMPaymentItem` object:
+If you provide items in the request you must make sure that you are following the next rules for the ATHMPaymentItem object:
 
-| Variable  | Expected Value |
+| Variable  | Expeted Value |
 | ------------- |:-------------:|
-| `name` | Spaces, letters and numbers |
+| `name` | Only allows space, letters and numbers |
 | `price` | Positive value greater than zero |
-| `description` | Spaces, letters and numbers |
+| `description` | Only allows space, letters and numbers |
 | `quantity` | Positive value greater than zero |
-| `metadata` | Spaces, letters and numbers |
+| `metadata` | Only allows space, letters and numbers |
 
-Note the request and items are the same objects in the response so the values and types are identical in request and response, but the response includes the following additional variables:
+Note the request and items are the same objects in the response so the values and types are identical in request and response, but he response includes the following additional variables
 
 | Variable  | Data Type | Description |
 | ------------- |:-------------:|------------- |
-| `dailyTransactionID` | Int | Consecutive of the transaction, when the transaction is cancelled o expired the value will be zero. |
-| `referenceNumber` | String | Unique transaction identifier, when the transaction is cancelled o expired the value will be an empty string. |
-| `date` | Date | Date of Transaction. |
-| `name` | String | Name of customer. |
-| `phoneNumber` | String | Phone number of customer. |
-| `email` | String | Email of customer. |
-| `fee` | Double | Fee paid in the transaction. |
-| `netAmount` | Double | Total amount paid by the end user without the fee. |
+| `dailyTransactionID` | Int | Consecutive of the transaction, when the transaction is cancelled o expired is zero. |
+| `referenceNumber` | String | Unique transaction identifier, when the transaction is cancelled o expired is an empty string. |
+| `date` | Date | Transaction's date. |
+| `name` | String | ATHM Customer's name, no matter the status of the transaction it always has the name. |
+| `phoneNumber` | String | ATHM Customer's phone, no matter the status of the transaction it always has telephone number in format (xxx) xxx-xxxx. |
+| `email` | String | ATHM Customer's email, no matter the status of the transaction it always has email. |
 
-If there is unexpected data in the request or response the SDK will call the closure `onPaymentException` and you will get a title and a message with information of the error. Your application must manage these error cases. For example:
+If the data is unexpected in the response or request SDK will call the closure onPaymentException and you will get a title and a message referring to the error obtained. Then your application must handle the error depending on the case.
 
 ```java
 @Override
@@ -206,31 +184,34 @@ If there is unexpected data in the request or response the SDK will call the clo
         //handle the error
     }
 ```
-#### Validate the status of Pending Payments.
-In some error cases payment responses may not be sent back to your application, for example when end users close the ATH Móvil application from the multitasking view of their device in the middle of the payment process.
 
-To mitigate these cases you can implement a payment validator on the `onResume()` of your checkout view where the payment button logic was implemented (`OpenATHM.validateData (payment, context);`). This method verifies the status of the transaction if the payment process was interrupted. It can also be used anywhere you want to validate whether a payment was completed or cancelled. The method can take a maximum of 30 seconds to respond, so consider managing this wait time from a user experience perspective.
+Create the payment validator in the `onResume()` in the class where it was called `OpenATHM.validateData (payment, context);`. This method validates the transaction if the flow was interrupted (it can be used anywhere you want to validate whether a payment was successful or canceled). The method can take a maximum of 30 seconds until you get a response, so consider adding code to wait for it to finish.
 
-```java                
+```java
 @Override
     protected void onResume() {
         super.onResume();
-        // Manage a loader to wait for the response
+        // Manage a loader to await for response
         showLoader();
 
-        // Call to validate transaction if payment process was interrupted
+        // Call to validate the transaction if flow was broken
         OpenATHM.verifyPaymentStatus(this);
+
     }
 ```
 
 #### Handle all payment responses.
-When a transaction is completed, canceled or expired a response is sent back to the URL scheme that was configured on the payment. Implement the `PaymentResponseListener` on the activity of the configured scheme.
+
+When a transaction is completed, canceled or expired a response is sent back to the URL scheme that was configured on the payment.
+
+Implement the PaymentResponseListener on the activity of the configured scheme.
 ```java
 public class Activity extends AppCompatActivity
-implements PaymentResponseListener {}
+implements PaymentResponseListener, View.OnClickListener {
+}
 ```
 
-On the onCreate method of the activity (configured in the manifest for the callback) call `PaymentResponse.validatePaymentResponse`
+On the OnCreate method of the activity call `PaymentResponse.validatePaymentResponse`
 
 ```java
 @Override
@@ -241,7 +222,7 @@ protected void onCreate(Bundle savedInstanceState) {
 }
 ```
 
-Handle the payment response using the following methods:
+Handle the payment response with using the following methods:
 * Completed
 ```java
 @Override
@@ -275,6 +256,17 @@ public void onExpiredPayment(Date date, String referenceNumber, String dailyTran
 }
 ```
 
+* Failed
+```java
+@Override
+public void onFailedPayment(Date date, String referenceNumber, String dailyTransactionID,
+                            String name, String phoneNumber, String email,
+                            Double total, Double tax, Double subtotal,
+                            String metadata1, String metadata2, ArrayList<Items> items) {
+        //Handle response
+}
+```
+
 * Exception
 ```java
 @Override
@@ -284,10 +276,9 @@ void onPaymentException(String error, String description){
 ```
 
 ## Testing
-To test your Payment Button integration you can make payments in production using the Private and Public tokens of your ATH Móvil Business account or you can use the public token "dummy" to make simulated payments. When you use the token "dummy":
-* The ATH Movil production application will simulate a payment.
-* No end user credentials need to be provided to interact with the simulated payment.
-* Completed, cancelled and expired payments can be tested.
+* You could test the integration with ATH Movil Personal Application so you can use your public token or set the public as "dummy".
+* Setting public token as "dummy"  ATH Movil Personal Application will simulate a payment, in that way you can test all the features such as
+completed, expired or cancelled payments. You need the latest version of ATH Movil Personal Application.
 
 ```java
 public void onClickPayButton(View view) {

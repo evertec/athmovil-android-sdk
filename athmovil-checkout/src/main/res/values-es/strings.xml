@@ -2,5 +2,13 @@
 
     <string name="app_name">athmovil-checkout</string>
     <string name="default_phone_language_code">es</string>
-   
+    <string name="payment_service_exception">Hay una excepción en el consumo del servicio</string>
+    <string name="payment_service_onfailure">Ha fallado el consumo del servicio</string>
+    <string name="alert">ATH</string>
+    <string name="loading">Cargando…</string>
+    <string name="business_token_expired_title">Negocio no Disponible</string>
+    <string name="business_token_expired_message">Este negocio no puede recibir pagos al momento. Por favor, intenta nuevamente mas tarde.</string>
+
+    <string name="payment_error_alert_title">Algo salió mal…</string>
+    <string name="payment_error_alert_message">Lamentamos los inconvenientes. Por favor intenta nuevamente más tarde.</string>
 </resources>

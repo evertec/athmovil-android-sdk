@@ -4,10 +4,10 @@ package com.evertecinc.athmovil.sdk;
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.DialogFragment;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -74,6 +74,9 @@ public class CustomDialog extends DialogFragment {
         switch (id) {
             case PUBLIC_TOKEN:
                 etEnterData.setInputType(TYPE_CLASS_TEXT);
+                break;
+            case PHONE_NUMBER:
+                etEnterData.setInputType(TYPE_CLASS_NUMBER);
                 break;
             case TIMEOUT:
                 etEnterData.setInputType(TYPE_CLASS_NUMBER);

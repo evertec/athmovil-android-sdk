@@ -12,8 +12,16 @@ public class ConstantUtil {
     public final static String REFERENCE_NUMBER_KEY = "referenceNumber";
     public final static String PAYMENT_DURATION_TIME_KEY = "purchaseTimeOut";
     public final static String API_ROUTE = "/rs/eCommerceTransfer/consultTransactionStatus/";
-    public final static long MAX_TIMEOUT_SECONDS = 600000; //10 min
-    public final static long MIN_TIMEOUT_SECONDS = 60000; // 1 min
+    public final static String API_ROUTE_PAYMENT_SERVICE = "api/business-transaction/ecommerce/payment";
+    public final static String API_ROUTE_AUTORIZATION_SERVICE = "api/business-transaction/ecommerce/authorization";
+    public final static long MAX_TIMEOUT_SECONDS = 600; //10 min
+    public final static long MIN_TIMEOUT_SECONDS = 60; // 1 min
+
+    public static final String CHECKOUT_PREFS_KEY = "ATHCheckoutPreferences";
+    public static final String TOKEN_AUTH_KEY = "TokenAuth";
+    public static final String ECOMMERCE_I_D_KEY = "EcommerceId";
+    public static final String IS_NEW_FLOW = "isNewFlow";
+    public static final String PUBLIC_TOK = "publicToken";
 
     public final static String PAYMENT_JSON_PUBLIC_TOKEN_KEY = "businessToken";
     public final static String PAYMENT_JSON_SUBTOTAL__KEY = "subtotal";
@@ -24,6 +32,8 @@ public class ConstantUtil {
     public final static String PAYMENT_JSON_METADATA_2 = "metadata2";
     public final static String PAYMENT_JSON_PAYMENT_ID_KEY = "paymentId";
     public final static String PAYMENT_JSON_ITEM_NAME_KEY = "name";
+    public final static String PAYMENT_JSON_ECOMMERCE_I_D = "ecommerceId";
+    public final static String PAYMENT_JSON_PHONE = "phoneLine";
 
     public final static String PAYMENT_JSON_ITEM_PRICE_KEY = "price";
     public final static String PAYMENT_JSON_ITEM_QUANTITY_KEY = "quantity";
@@ -59,8 +69,7 @@ public class ConstantUtil {
     public final static String ITEM_QUANTITY_ERROR_LOG_MESSAGE = "Item's quantity data type value is invalid.";
     public final static String ITEM_NAME_ERROR_LOG_MESSAGE = "Item's name value is invalid.";
     public final static String ITEM_DESC_ERROR_LOG_MESSAGE = "Item's description value is invalid.";
-    public final static String METADATA_ERROR_MESSAGE = "Metadata1 can not be greater than 40 characters.";
-    public final static String METADATA2_ERROR_MESSAGE = "Metadata2 can not be greater than 40 characters.";
+    public final static String NULL_METADATA_LOG_MESSAGE = "The metadata data type value is invalid.";
     public final static String NULL_ITEM_METADATA_LOG_MESSAGE = "Item's metadata value is invalid.";
     public final static String ENCODE_JSON_LOG_MESSAGE = "An error occurred while encoding JSON.";
     public final static String DECODE_JSON_LOG_MESSAGE = "An error occurred while decoding JSON.";
@@ -75,7 +84,8 @@ public class ConstantUtil {
     public static final String EXCEPTION = "exception";
     public static final String EXCEPTION_CAUSE = "exceptionCause";
 
-    //Endpoints
-    public static final String INTERNAL_TEST_URL = "https://www.athmovil.com";
-    public static final String PRODUCTION_URL = "https://www.athmovil.com";
+    //prod
+    public static final String AWS_URL_PAYMENT_PRO = "ze9tdonfjl-vpce-0dbf78eed6413b115.execute-api.us-east-1.amazonaws.com";
+
+    public static final String PRODUCTION_URL = "https://www.athmovil.com/";
 }

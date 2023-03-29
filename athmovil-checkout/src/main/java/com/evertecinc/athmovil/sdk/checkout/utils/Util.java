@@ -1,6 +1,8 @@
 package com.evertecinc.athmovil.sdk.checkout.utils;
 
-import androidx.annotation.VisibleForTesting;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -39,6 +41,7 @@ public class Util {
     public static ATHMPayment trimData(ATHMPayment payment) {
         payment.setMetadata1(payment.getMetadata1() != null ? payment.getMetadata1().trim() : null);
         payment.setMetadata2(payment.getMetadata2() != null ? payment.getMetadata2().trim() : null);
+        payment.setPaymentId(payment.getPaymentId().trim());
         for (int i = 0; i < payment.getItems().size(); i++) {
             if (payment.getItems().get(i).getMetadata() != null) {
                 payment.getItems().get(i).setMetadata(payment.getItems().get(i).getMetadata()
@@ -48,12 +51,25 @@ public class Util {
                 payment.getItems().get(i).setName(payment.getItems().get(i).getName()
                         != null ? payment.getItems().get(i).getName().trim() : null);
             }
-            if (payment.getItems().get(i).getDescription() != null) {
-                payment.getItems().get(i).setDescription(payment.getItems().get(i).getDescription()
-                        != null ? payment.getItems().get(i).getDescription().trim() : null);
+            if (payment.getItems().get(i).getDesc() != null) {
+                payment.getItems().get(i).setDesc(payment.getItems().get(i).getDesc()
+                        != null ? payment.getItems().get(i).getDesc().trim() : null);
             }
         }
         PaymentResultFlag.getApplicationInstance().setPaymentRequest(payment);
         return payment;
+    }
+
+    public static void setPrefsString(final String key, final String value, final Context context) {
+        final SharedPreferences prefs = context.getSharedPreferences(ConstantUtil.CHECKOUT_PREFS_KEY, Context.MODE_PRIVATE);
+        final SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(key, value);
+        editor.apply();
+    }
+
+    public static String getPrefsString(final String key ,final Context context) {
+        final SharedPreferences prefs = context.getSharedPreferences(ConstantUtil.CHECKOUT_PREFS_KEY, Context.MODE_PRIVATE);
+        String savedValue = !TextUtils.isEmpty(prefs.getString(key, null)) ? prefs.getString(key, null) : "";
+        return savedValue;
     }
 }

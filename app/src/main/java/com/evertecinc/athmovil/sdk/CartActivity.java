@@ -1,9 +1,9 @@
 package com.evertecinc.athmovil.sdk;
 
 import android.content.Context;
-import androidx.databinding.DataBindingUtil;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -29,7 +29,10 @@ public class CartActivity extends AppCompatActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_cart);
         binding.executePendingBindings();
         binding.setLifecycleOwner(this);
+        initView();
+    }
 
+    public void initView(){
         String savedPaymentAmount = Utils.getPrefsString(Constants.PAYMENT_AMOUNT_PREF_KEY, this);
         String savedTax = Utils.getPrefsString(Constants.TAX_PREF_KEY, this);
         String savedSubtotal = Utils.getPrefsString(Constants.SUBTOTAL_PREF_KEY, this);
@@ -108,14 +111,10 @@ public class CartActivity extends AppCompatActivity {
 
     private void sendData() {
         String token = Utils.getPrefsString(Constants.PUBLIC_TOKEN_PREF_KEY, this);
-        if (TextUtils.isEmpty(token)) {
-            token = "dummy";
-        }
-        payment.setPublicToken(token);
 
-        if (Utils.getPrefsBoolean(Constants.ITEMS_BOOL_PREF_KEY, this)) {
-            payment.setItems(items);
-        }
+        payment.setPublicToken(token);
+        payment.setItems(items);
+        payment.setPhoneNumber(Utils.getPrefsString(Constants.PHONE_NUMBER_PREF_KEY, this));
 
         sendAmounts();
         sendMetadata();
@@ -142,6 +141,15 @@ public class CartActivity extends AppCompatActivity {
 
         //Need the Schema without the app bundle.
         payment.setCallbackSchema("ATHMSDK");
+
+        //For Evertec Test Only
+        setBuildType(Utils.getPrefsString(Constants.BUILD_TYPE_PREF_KEY, this));
+        payment.setBuildType(buildType);
+
+        String isNewFlow = Utils.getPrefsString(Constants.FLOW_TYPE_PREF_KEY, this);
+        if (isNewFlow == null || isNewFlow.equalsIgnoreCase("yes")) {
+            payment.setNewFlow(true);
+        }
 
         makePayment(payment, this);
     }
