@@ -85,7 +85,7 @@ public class ConstantUtil {
     public static final String EXCEPTION_CAUSE = "exceptionCause";
 
     //prod
-    public static final String AWS_URL_PAYMENT_PRO = "ze9tdonfjl-vpce-0dbf78eed6413b115.execute-api.us-east-1.amazonaws.com";
+    public static final String AWS_URL_PAYMENT_PRO = "payments.athmovil.com";
 
     public static final String PRODUCTION_URL = "https://www.athmovil.com/";
 }
