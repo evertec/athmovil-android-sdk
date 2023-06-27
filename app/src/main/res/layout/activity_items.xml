@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".ItemsListActivity"
     >
-    <com.google.android.material.appbar.AppBarLayout
+    <android.support.design.widget.AppBarLayout
         android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -40,13 +40,13 @@
                 android:layout_marginStart="2dp"
                 />
         </RelativeLayout>
-    </com.google.android.material.appbar.AppBarLayout>
+    </android.support.design.widget.AppBarLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/rvItemsList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
-    </androidx.recyclerview.widget.RecyclerView>
+    </android.support.v7.widget.RecyclerView>
 </LinearLayout>
 </layout>

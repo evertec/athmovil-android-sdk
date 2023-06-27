@@ -1,7 +1,7 @@
 package com.evertecinc.athmovil.sdk;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -68,7 +68,7 @@ public class ItemsListAdapter extends RecyclerView.Adapter<ItemsListAdapter.View
         Items item = mDataSet.get(position);
         if (item != null) {
             viewHolder.tvName.setText(item.getName());
-            viewHolder.tvDescription.setText(item.getDescription());
+            viewHolder.tvDescription.setText(item.getDesc());
             viewHolder.tvQuantity.setText(TextUtils.concat("x",String.valueOf(item.getQuantity())));
             viewHolder.tvPrice.setText(Utils.getBalanceString(item.getPrice().toString()));
             viewHolder.tvMetadata.setText(item.getMetadata());

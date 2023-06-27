@@ -171,9 +171,7 @@ public class PaymentReturnedData {
                 Objects.equals(tax, data.tax) &&
                 Objects.equals(metadata1, data.metadata1) &&
                 Objects.equals(metadata2, data.metadata2) &&
-                Objects.equals(items, data.items) &&
                 Objects.equals(date, data.date) &&
-                Objects.equals(referenceNumber, data.referenceNumber) &&
                 Objects.equals(dailyTransactionID, data.dailyTransactionID) &&
                 Objects.equals(name, data.name) &&
                 Objects.equals(phoneNumber, data.phoneNumber) &&

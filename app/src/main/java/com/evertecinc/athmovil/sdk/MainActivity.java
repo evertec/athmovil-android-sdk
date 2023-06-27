@@ -1,12 +1,12 @@
 package com.evertecinc.athmovil.sdk;
 
 import android.content.Intent;
-import androidx.databinding.DataBindingUtil;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Spanned;
@@ -116,14 +116,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (name == null || name.isEmpty())
             name = "";
-        if (description == null || description.isEmpty())
-            description = "";
         if (quantity == null || quantity.isEmpty())
             quantity = "1";
         if (price == null || price.isEmpty())
             price = "1";
-        if (metadata == null || metadata.isEmpty())
-            metadata = "";
         items.add(new Items(name, description, Double.parseDouble(price),
                 Long.parseLong(quantity), metadata));
         adapter.loadData(items, false);

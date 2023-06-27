@@ -35,7 +35,7 @@ public class PaymentResponseUT {
     @Test
     public void WhenValidatingPaymentResponse_GivenCancelledPaymentResponse_ThenReturnOnCancelledPaymentData() {
         PaymentReturnedData result = gson.fromJson(setCancelledPaymentResponse(), PaymentReturnedData.class);
-        PaymentResponse.validatePaymentResponse(result, listener);
+        PaymentResponse.validatePaymentResponse(result, listener, null);
         verify(listener, only()).onCancelledPayment(Util.getDateFormat(result.getDate()), result.getReferenceNumber(), result.getDailyTransactionID(),
                 result.getName(), result.getPhoneNumber(), result.getEmail(),
                 result.getTotal(), result.getTax(), result.getSubtotal(), result.getFee(), result.getNetAmount(),
@@ -45,7 +45,7 @@ public class PaymentResponseUT {
     @Test
     public void WhenValidatingPaymentResponse_GivenExpiredPaymentResponse_ThenReturnOnExpiredPaymentData() {
         PaymentReturnedData result = gson.fromJson(setExpiredPaymentResponse(), PaymentReturnedData.class);
-        PaymentResponse.validatePaymentResponse(result, listener);
+        PaymentResponse.validatePaymentResponse(result, listener, null);
         verify(listener, only()).onExpiredPayment(Util.getDateFormat(result.getDate()), result.getReferenceNumber(), result.getDailyTransactionID(),
                 result.getName(), result.getPhoneNumber(), result.getEmail(),
                 result.getTotal(), result.getTax(), result.getSubtotal(), result.getFee(), result.getNetAmount(),
@@ -55,7 +55,7 @@ public class PaymentResponseUT {
     @Test
     public void WhenValidatingPaymentResponse_GivenCompletedPaymentResponse_ThenReturnOnCompletedPaymentData() {
         PaymentReturnedData result = gson.fromJson(setCompletedPaymentResponse(), PaymentReturnedData.class);
-        PaymentResponse.validatePaymentResponse(result, listener);
+        PaymentResponse.validatePaymentResponse(result, listener, null);
         verify(listener, only()).onCompletedPayment(Util.getDateFormat(result.getDate()), result.getReferenceNumber(), result.getDailyTransactionID(),
                 result.getName(), result.getPhoneNumber(), result.getEmail(),
                 result.getTotal(), result.getTax(), result.getSubtotal(), result.getFee(), result.getNetAmount(),

@@ -24,7 +24,6 @@ public class ExceptionUtil {
         } else if (!validateItems(request.getItems()) ||
                 !validateDataFields(exceptionMessage) ||
                 !validateAmountFields(request.getSubtotal(), request.getTotal(), request.getTax())
-                || !validateMetadataFields(request.getMetadata1(), request.getMetadata2())
                 || !validateTokenSchema(request.getPublicToken(), request.getCallbackSchema())) {
             return false;
         }
@@ -90,17 +89,6 @@ public class ExceptionUtil {
         } else {
             return true;
         }
-    }
-
-    public boolean validateMetadataFields(String metadata1, String metadata2) {
-        if (metadata1 != null && metadata1.length() > 40) {
-            setExceptionMessage(ConstantUtil.METADATA_ERROR_MESSAGE);
-            return false;
-        } else if (metadata2 != null && metadata2.length() > 40) {
-            setExceptionMessage(ConstantUtil.METADATA2_ERROR_MESSAGE);
-            return false;
-        }
-        return true;
     }
 
     public boolean validateTokenSchema(String token, String schema) {

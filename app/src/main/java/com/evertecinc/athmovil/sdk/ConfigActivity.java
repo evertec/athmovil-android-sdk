@@ -1,9 +1,9 @@
 package com.evertecinc.athmovil.sdk;
 
-import androidx.databinding.DataBindingUtil;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.PopupMenu;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
 
 import com.evertecinc.athmovil.sdk.databinding.ActivityConfigBinding;
@@ -25,6 +25,7 @@ public class ConfigActivity extends AppCompatActivity implements
         setUpInitialValues();
         setUpButtonThemeSelection();
         setUpBuildTypeSelection();
+        setUpFlowTypeSelection();
         setOnClickListeners();
     }
 
@@ -32,7 +33,7 @@ public class ConfigActivity extends AppCompatActivity implements
         String savedPublicToken = Utils.getPrefsString(
                 Constants.PUBLIC_TOKEN_PREF_KEY, this);
         String publicToken = savedPublicToken != null ? savedPublicToken :
-                "dummy";
+                "c7f95dd740d43316cfeb56f9686dd2fe6e902a0e";
         binding.tvPublicToken.setText(publicToken);
 
         setupConfigs();
@@ -52,6 +53,10 @@ public class ConfigActivity extends AppCompatActivity implements
         String savedBuildType = Utils.getPrefsString(Constants.BUILD_TYPE_PREF_KEY, this);
         String buildType = savedBuildType != null ? savedBuildType : getString(R.string.production);
         binding.tvBuildType.setText(buildType);
+
+        String savedFlowType = Utils.getPrefsString(Constants.FLOW_TYPE_PREF_KEY, this);
+        String flowType = savedFlowType != null ? savedFlowType : getString(R.string.si_string);
+        binding.tvFlowType.setText(flowType);
     }
 
     private void setupAmounts() {
@@ -75,6 +80,9 @@ public class ConfigActivity extends AppCompatActivity implements
 
         String savedMetadata2 = Utils.getPrefsString(Constants.METADATA2_PREF_KEY, this);
         binding.tvMetadata2.setText(savedMetadata2);
+
+        String savedphoneNumber = Utils.getPrefsString(Constants.PHONE_NUMBER_PREF_KEY, this);
+        binding.tvPhoneNumber.setText(savedphoneNumber);
     }
 
     private void setOnClickListeners() {
@@ -116,6 +124,12 @@ public class ConfigActivity extends AppCompatActivity implements
                     getString(R.string.metadata_2), getString(R.string.metadata2_alert_message),
                     Constants.RequestId.METADATA2);
         });
+
+        binding.llPhoneNumberContainer.setOnClickListener(v -> {
+            CustomDialog.show(this, getString(R.string.phoneNumber_alert_title),
+                    getString(R.string.phone_number), getString(R.string.phoneNumber_alert_message),
+                    Constants.RequestId.PHONE_NUMBER);
+        });
     }
 
     @Override
@@ -126,8 +140,13 @@ public class ConfigActivity extends AppCompatActivity implements
                 Utils.setPrefsString(Constants.PUBLIC_TOKEN_PREF_KEY, data, this);
                 break;
             case TIMEOUT:
-                binding.tvTimeout.setText(data);
-                Utils.setPrefsInt(Constants.TIMEOUT_PREF_KEY, Integer.parseInt(data), this);
+                if(!TextUtils.isEmpty(data)){
+                    binding.tvTimeout.setText(data);
+                    Utils.setPrefsInt(Constants.TIMEOUT_PREF_KEY, Integer.parseInt(data), this);
+                }else{
+                    Utils.setPrefsInt(Constants.TIMEOUT_PREF_KEY, 600, this);
+                    binding.tvTimeout.setText("");
+                }
                 break;
             case PAYMENT_AMOUNT:
                 binding.tvPaymentAmount.setText(TextUtils.concat("$", data));
@@ -149,6 +168,11 @@ public class ConfigActivity extends AppCompatActivity implements
             case METADATA2:
                 binding.tvMetadata2.setText(data.isEmpty() ? null : data);
                 Utils.setPrefsString(Constants.METADATA2_PREF_KEY, data.isEmpty() ? null :
+                        data, this);
+                break;
+            case PHONE_NUMBER:
+                binding.tvPhoneNumber.setText(data.isEmpty() ? null : data);
+                Utils.setPrefsString(Constants.PHONE_NUMBER_PREF_KEY, data.isEmpty() ? null :
                         data, this);
                 break;
             default:
@@ -179,6 +203,21 @@ public class ConfigActivity extends AppCompatActivity implements
             buildType.setOnMenuItemClickListener(item -> {
                 binding.tvBuildType.setText(item.getTitle().toString());
                 Utils.setPrefsString(Constants.BUILD_TYPE_PREF_KEY,
+                        item.getTitle().toString(), this);
+                return false;
+            });
+            buildType.show();
+        });
+    }
+
+    private void setUpFlowTypeSelection() {
+        binding.llFlowTypeContainer.setOnClickListener(view -> {
+            final PopupMenu buildType = new PopupMenu(this, binding.llFlowTypeContainer);
+            buildType.getMenuInflater().inflate(R.menu.flow_type_filter, buildType.getMenu());
+            buildType.setGravity(END);
+            buildType.setOnMenuItemClickListener(item -> {
+                binding.tvFlowType.setText(item.getTitle().toString());
+                Utils.setPrefsString(Constants.FLOW_TYPE_PREF_KEY,
                         item.getTitle().toString(), this);
                 return false;
             });
