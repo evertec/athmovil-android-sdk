@@ -7,7 +7,7 @@ Disclaimer: The Payment Button ATH Móvil is not compatible with any major Ecomm
 ## Prerequisites
 Before you begin, please review the following prerequisites:
 
-1. An active ATH Móvil Business account is required to continue.
+1. An active ATH Móvil Business account is required to continue .
  * Note: *To sign up, download "ATH Móvil Business" on the App Store if you have an iOS device or on the Play Store if you have an Android device.*
 
 
