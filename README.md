@@ -34,6 +34,8 @@ For more information related to ATH Móvil and how it works please refer to:[ATH
 
 If you need help signing up, adding a card or have any other question please refer to https://athmovilbusiness.com/preguntas or contact our support team at (787) 773-5466. For technical support please complete the following form:  https://forms.gle/ZSeL8DtxVNP2K2iDA.
 
+## Support
+If you need help signing up, adding a card or have any other question please refer to https://ath.business.com/preguntas. For technical support please complete the following form:  https://ath.business/botondepago.
 
 ## Installation
 Before we get started, let’s configure your project:
