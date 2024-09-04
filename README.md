@@ -90,8 +90,18 @@ Add the “Pay with ATH Móvil” button to your checkout XML view.
 
 ----
 ### Manifest
-Configure the activity where the payment response will be sent to on your manifest.
+Configure the activity where the payment response will be sent to on your manifest. In order to open the ATH Móvil app on Android version 11 or higher, include the following querie objetc.
 
+```java
+<queries>
+    <package android:name="com.evertec.athmovil.android" />
+    
+    <intent>
+        <action android:name="android.intent.action.SEND" />
+        <data android:mimeType="text/plain" />
+    </intent>
+</queries>
+```
 ```java
 <activity
     android:name=".Activity">
