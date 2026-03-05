@@ -42,8 +42,8 @@ public class NewRelicConfig {
         event.put("merchant_app_id", merchantAppId);
         event.put("build_type", buildType);
         event.put("timestamp", System.currentTimeMillis());
-        event.put("sdk_platform", ConstantUtil.SDK_VERSION);
-        event.put("sdk_version", ConstantUtil.SDK_PLATFORM);
+        event.put("sdk_version", ConstantUtil.SDK_VERSION);
+        event.put("sdk_platform", ConstantUtil.SDK_PLATFORM);
         event.put("device_os_version", Build.VERSION.RELEASE);
         event.put("device_os_model", Build.MODEL);
 

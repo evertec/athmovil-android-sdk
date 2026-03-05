@@ -155,6 +155,7 @@ public class PaymentResponse {
     static void validatePaymentResponse(PaymentReturnedData result, PaymentResponseListener listener, AuthorizationResponse responseService) {
 
         ATHMPayment paymentRequest = PaymentResultFlag.getApplicationInstance().getPaymentRequest();
+      //  String ecommerceAppName = Util.getPrefsString(ConstantUtil.ECOMMERCE_APP_NAME, paymentRequest.getContext());
         PaymentResultFlag.getApplicationInstance().setPaymentRequest(null);
         if (result == null || result.getTotal() == 0.0) {
             result = setRequestData(paymentRequest, result);
@@ -181,22 +182,22 @@ public class PaymentResponse {
 
                     sendEventToNewRelic(ConstantUtil.NW_RESPONSE_SUCCESS_PAYMENT,
                             responseService.getData().getEcommerceId(),
-                            responseService.getStatus(),
-                            PaymentResultFlag.getApplicationInstance().getSchemeForNR(),
-                            ConstantUtil.BUILD_TYPE_PROD
+                            status,
+                            PaymentResultFlag.getApplicationInstance().getEcommerceAppName(),
+                            ConstantUtil.BUILD_TYPE
                     );
                 }else{
                     status = "CANCELLED";
                 }
             }else{
                 status = "FAILED";
-                String schemeForNR = PaymentResultFlag.getApplicationInstance().getSchemeForNR();
+                String schemeForNR = PaymentResultFlag.getApplicationInstance().getEcommerceAppName();
                 schemeForNR = schemeForNR != null ? schemeForNR : "N/A";
                 sendEventToNewRelic(ConstantUtil.NW_RESPONSE_FAILED_PAYMENT,
                         responseService.getData() != null ? responseService.getData().getEcommerceId() : "N/A",
                         responseService.getStatus(),
                         schemeForNR,
-                        ConstantUtil.BUILD_TYPE_PROD
+                        ConstantUtil.BUILD_TYPE
                 );
             }
 
@@ -221,8 +222,8 @@ public class PaymentResponse {
                 sendEventToNewRelic(ConstantUtil.NW_RESPONSE_FAILED_PAYMENT,
                         ConstantUtil.NW_RESPONSE_EXPIRED_PAYMENT,
                         status,
-                        PaymentResultFlag.getApplicationInstance().getSchemeForNR(),
-                        ConstantUtil.BUILD_TYPE_PROD
+                        PaymentResultFlag.getApplicationInstance().getEcommerceAppName(),
+                        ConstantUtil.BUILD_TYPE
                 );
 
                 break;
@@ -233,6 +234,12 @@ public class PaymentResponse {
                         result.getTotal(), result.getTax(), result.getSubtotal(), result.getFee(),
                         result.getNetAmount(), result.getMetadata1(), result.getMetadata2(),
                         result.getPaymentId(), result.getItemsSelectedList());
+                sendEventToNewRelic(ConstantUtil.NW_RESPONSE_FAILED_PAYMENT,
+                        ConstantUtil.NW_RESPONSE_CANCELLED_PAYMENT,
+                        status,
+                        PaymentResultFlag.getApplicationInstance().getEcommerceAppName(),
+                        ConstantUtil.BUILD_TYPE
+                );
                 break;
             default:
                 listener.onFailedPayment(getDateFormat(result.getDate()),

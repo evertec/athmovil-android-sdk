@@ -22,14 +22,14 @@ public class PaymentResultFlag extends Application {
 
     private ATHMPayment paymentRequest = null;
 
-    private String schemeForNR = null;
+    private String ecommerceAppName = null;
 
-    public String getSchemeForNR() {
-        return schemeForNR;
+    public String getEcommerceAppName() {
+        return ecommerceAppName;
     }
 
-    public void setSchemeForNR(String schemeForNR) {
-        this.schemeForNR = schemeForNR;
+    public void setEcommerceAppName(String ecommerceAppName) {
+        this.ecommerceAppName = ecommerceAppName;
     }
 
     public static void setApplicationInstance(PaymentResultFlag applicationInstance) {

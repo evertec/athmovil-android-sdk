@@ -87,20 +87,31 @@ public class ConstantUtil {
     public static final String EXCEPTION = "exception";
     public static final String EXCEPTION_CAUSE = "exceptionCause";
 
+    //Endpoints
+
     //prod
     public static final String AWS_URL_PAYMENT_PRO = "payments.athmovil.com";
+
+
+    public static final String PRODUCTION_URL = "https://www.athmovil.com/";
 
     public static final String NW_INIT_PAYMENT_SUCCESS = "ATHMSuccessPaymentInitEvent";
     public static final String NW_INIT_PAYMENT_FAILED = "ATHMFailedPaymentInitEvent";
     public static final String NW_RESPONSE_SUCCESS_PAYMENT = "ATHMSuccessPaymentEvent";
     public static final String NW_RESPONSE_FAILED_PAYMENT = "ATHMFailedPaymentEvent";
 
-    public static final String NW_RESPONSE_EXPIRED_PAYMENT = "Expired";
+    public static final String NW_RESPONSE_EXPIRED_PAYMENT = "EXPIRED";
 
-    public static final String SDK_VERSION = "6.0.0";
+    public static final String NW_RESPONSE_CANCELLED_PAYMENT = "CANCELLED";
+
+    public static final String SDK_VERSION = "6.0.1";
 
     public static final String SDK_PLATFORM = "Android_Native";
 
-    public static final String BUILD_TYPE_PROD = "PROD";
+    public static final String BUILD_TYPE = "PROD";
+
+    public static final String ATHM_APP_NOT_FOUND = "Unknown Application";
+
+    public  static final String ECOMMERCE_APP_NAME = "DEFAULT_ECOMMERCE_APP";
 
 }

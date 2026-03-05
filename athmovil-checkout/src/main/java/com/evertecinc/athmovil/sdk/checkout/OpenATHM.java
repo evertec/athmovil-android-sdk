@@ -25,6 +25,7 @@ import com.evertecinc.athmovil.sdk.checkout.objects.payment.PaymentRequest;
 import com.evertecinc.athmovil.sdk.checkout.objects.payment.PaymentResponseObject;
 import com.evertecinc.athmovil.sdk.checkout.utils.ConstantUtil;
 import com.evertecinc.athmovil.sdk.checkout.utils.ExceptionUtil;
+import com.evertecinc.athmovil.sdk.checkout.utils.GetApplicationNameUtil;
 import com.evertecinc.athmovil.sdk.checkout.utils.JsonUtil;
 import com.evertecinc.athmovil.sdk.checkout.utils.Util;
 import com.google.gson.Gson;
@@ -33,7 +34,6 @@ import com.google.gson.JsonSyntaxException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -58,6 +58,7 @@ public class OpenATHM {
     private static String buildType = "";
     static PostService postsService;
     static ProgressDialog nDialog;
+    private static String ecommerceAppName = "";
 
 
     /**
@@ -76,7 +77,7 @@ public class OpenATHM {
 
     public static void sendData(@NonNull ATHMPayment ATHMPayment, @NonNull Context context){
         PaymentResultFlag.getApplicationInstance().setPaymentRequest(ATHMPayment);
-        PaymentResultFlag.getApplicationInstance().setSchemeForNR(ATHMPayment.getCallbackSchema());
+        PaymentResultFlag.getApplicationInstance().setEcommerceAppName(ecommerceAppName);
         try {
             validateATHMPayment(ATHMPayment);
             defineTimeout(ATHMPayment);
@@ -85,8 +86,8 @@ public class OpenATHM {
             sendEventToNewRelic(ConstantUtil.NW_INIT_PAYMENT_FAILED,
                    e.getMessage(),
                    ConstantUtil.TOKEN_FOR_FAILURE,
-                    "N/A",
-                    ConstantUtil.BUILD_TYPE_PROD);
+                    ecommerceAppName,
+                    ConstantUtil.BUILD_TYPE);
             showResults(context, null, ATHMPayment.getCallbackSchema(), e);
         }
     }
@@ -208,9 +209,6 @@ public class OpenATHM {
         PackageInfo athmInfo;
         int athmVersionCode = 0;
 
-        if(buildType.equalsIgnoreCase(".qa_dev")){
-            buildType = ".qa";
-        }
         String athmBundleId = COM_EVERTEC_ATHMOVIL_ANDROID + buildType;
 
         Intent intent = context.getPackageManager().getLaunchIntentForPackage(athmBundleId);
@@ -220,10 +218,10 @@ public class OpenATHM {
         } catch (PackageManager.NameNotFoundException e) {
             sendEventToNewRelic(
                     ConstantUtil.NW_INIT_PAYMENT_FAILED,
-                    e.getMessage(),
+                    e.toString(),
                     ConstantUtil.TOKEN_FOR_FAILURE,
                     "N/A",
-                    ConstantUtil.BUILD_TYPE_PROD
+                    ConstantUtil.BUILD_TYPE
                     );
             logForDebug(e.getMessage());
         }
@@ -277,8 +275,10 @@ public class OpenATHM {
      */
     public static void paymentServices(ATHMPayment payment, Context context) {
 
-        String url = ConstantUtil.AWS_URL_PAYMENT_PRO;
+        ecommerceAppName = GetApplicationNameUtil.getApplicationName(context);
+        Util.setPrefsString(ConstantUtil.ECOMMERCE_APP_NAME, ecommerceAppName, context);
 
+        String url = ConstantUtil.AWS_URL_PAYMENT_PRO;
 
         Retrofit retrofit = retrofitInstance("https://"+url);
         postsService = retrofit.create(PostService.class);
@@ -310,8 +310,8 @@ public class OpenATHM {
                             sendEventToNewRelic(ConstantUtil.NW_INIT_PAYMENT_SUCCESS,
                                     ecommerce,
                                     ConstantUtil.TOKEN_FOR_SUCCESS,
-                                    payment.getCallbackSchema(),
-                                    ConstantUtil.BUILD_TYPE_PROD);
+                                    ecommerceAppName,
+                                    ConstantUtil.BUILD_TYPE);
                             return;
                         }
                     }
@@ -324,8 +324,8 @@ public class OpenATHM {
                         sendEventToNewRelic(ConstantUtil.NW_INIT_PAYMENT_FAILED,
                                 mError.getMessage(),
                                 ConstantUtil.TOKEN_FOR_FAILURE,
-                                "N/A",
-                               ConstantUtil.BUILD_TYPE_PROD);
+                                ecommerceAppName,
+                               ConstantUtil.BUILD_TYPE);
                         return;
                     }
 
@@ -334,8 +334,8 @@ public class OpenATHM {
                     sendEventToNewRelic(ConstantUtil.NW_INIT_PAYMENT_FAILED,
                             e.getMessage(),
                             ConstantUtil.TOKEN_FOR_FAILURE,
-                            "N/A",
-                            ConstantUtil.BUILD_TYPE_PROD);
+                            ecommerceAppName,
+                            ConstantUtil.BUILD_TYPE);
                 }
 
                 getAlert(context, context.getString(R.string.payment_error_alert_title), context.getString(R.string.payment_error_alert_message));
@@ -348,8 +348,8 @@ public class OpenATHM {
                 sendEventToNewRelic(ConstantUtil.NW_INIT_PAYMENT_FAILED,
                         t.getMessage(),
                         ConstantUtil.TOKEN_FOR_FAILURE,
-                        payment.getCallbackSchema(),
-                        ConstantUtil.BUILD_TYPE_PROD);
+                        ecommerceAppName,
+                        ConstantUtil.BUILD_TYPE);
                 getAlert(context, context.getString(R.string.payment_error_alert_title), context.getString(R.string.payment_error_alert_message));
             }
         });
@@ -445,9 +445,9 @@ public class OpenATHM {
                 logForDebug(t.getMessage());
                 sendEventToNewRelic(ConstantUtil.NW_RESPONSE_FAILED_PAYMENT,
                         t.getMessage(), 
-                        ConstantUtil.TOKEN_FOR_FAILURE, 
-                        payment.getCallbackSchema(),
-                        ConstantUtil.BUILD_TYPE_PROD);
+                        ConstantUtil.TOKEN_FOR_FAILURE,
+                        ecommerceAppName,
+                        ConstantUtil.BUILD_TYPE);
                 PaymentResultFlag.getApplicationInstance().setPaymentRequest(null);
                 AuthorizationResponse aut = new AuthorizationResponse();
                 aut.setStatus("Error");
