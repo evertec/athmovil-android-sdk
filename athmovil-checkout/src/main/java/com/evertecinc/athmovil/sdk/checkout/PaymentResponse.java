@@ -5,17 +5,23 @@ import android.content.Intent;
 import android.text.TextUtils;
 import com.evertecinc.athmovil.sdk.checkout.interfaces.PaymentResponseListener;
 import com.evertecinc.athmovil.sdk.checkout.objects.ATHMPayment;
+import com.evertecinc.athmovil.sdk.checkout.objects.Items;
 import com.evertecinc.athmovil.sdk.checkout.objects.PaymentResultFlag;
 import com.evertecinc.athmovil.sdk.checkout.objects.PaymentReturnedData;
 import com.evertecinc.athmovil.sdk.checkout.objects.payment.AuthorizationResponse;
 import com.evertecinc.athmovil.sdk.checkout.utils.ConstantUtil;
 import com.evertecinc.athmovil.sdk.checkout.utils.Util;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 import static com.evertecinc.athmovil.sdk.checkout.utils.NewRelicConfig.sendEventToNewRelic;
 import static com.evertecinc.athmovil.sdk.checkout.utils.Util.getDateFormat;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+
+import java.util.ArrayList;
+import java.util.Date;
 
 public class PaymentResponse {
 
@@ -27,10 +33,10 @@ public class PaymentResponse {
      */
     public static void validatePaymentResponse(@NonNull Intent intent, @NonNull Context context,
                                                @NonNull PaymentResponseListener listener) {
-        String publicToken = Util.getPrefsString(ConstantUtil.PUBLIC_TOK, context);
+        String publicToken = Util.getPrefsString(ConstantUtil.BasicData.PUBLIC_TOK, context);
         if(!publicToken.equalsIgnoreCase("dummy")){
             if (PaymentResponse.statusVerify(intent, listener)) {
-                OpenATHM.authorizationServices( listener, context, intent);
+                OpenATHM.authorizationServices(listener, context, intent);
                 return;
             }
         }
@@ -38,40 +44,56 @@ public class PaymentResponse {
         validateDataResponse(intent, listener, null);
     }
 
+    public static boolean verifiedGetExtra(@NonNull Intent intent){
+        if (intent.getExtras() == null)  return false;
+
+        String jsonResponseValue = intent.getExtras().getString("paymentResult");
+
+        return jsonResponseValue != null;
+    }
+
+    public static void setDefaultError(@NonNull PaymentResponseListener listener){
+        PaymentResultFlag.getApplicationInstance().setPaymentRequest(null);
+        listener.onPaymentException(
+                ConstantUtil.ExceptionsLogs.RESPONSE_EXCEPTION_TITLE,
+                ConstantUtil.ExceptionsLogs.RESPONSE_NULL_EXCEPTION
+        );
+    }
+
+    public static void setDecodeJsonError(@NonNull PaymentResponseListener listener){
+        PaymentResultFlag.getApplicationInstance().setPaymentRequest(null);
+        listener.onPaymentException(
+                ConstantUtil.ExceptionsLogs.RESPONSE_EXCEPTION_TITLE,
+                ConstantUtil.ExceptionsLogs.DECODE_JSON_LOG_MESSAGE
+        );
+    }
+
     static void validateDataResponse(@NonNull Intent intent, @NonNull PaymentResponseListener listener,
                                      AuthorizationResponse responseService){
 
         PaymentReturnedData result;
-        if (intent.getExtras() == null) {
-            listener.onPaymentException(ConstantUtil.RESPONSE_EXCEPTION_TITLE,
-                    ConstantUtil.RESPONSE_NULL_EXCEPTION);
+        if (!verifiedGetExtra(intent)) {
+            setDefaultError(listener);
             return;
         }
 
         //Extracting response from intent extras
         String jsonResponseValue = intent.getExtras().getString("paymentResult");
 
-        if (jsonResponseValue == null) {
+        if (jsonResponseValue.equalsIgnoreCase(ConstantUtil.ExceptionsLogs.EXCEPTION)) {
             PaymentResultFlag.getApplicationInstance().setPaymentRequest(null);
-            listener.onPaymentException(ConstantUtil.RESPONSE_EXCEPTION_TITLE,
-                    ConstantUtil.RESPONSE_NULL_EXCEPTION);
-            return;
-        }
-        if (jsonResponseValue.equalsIgnoreCase(ConstantUtil.EXCEPTION)) {
-            PaymentResultFlag.getApplicationInstance().setPaymentRequest(null);
-            String exceptionCause = intent.getExtras().getString(ConstantUtil.EXCEPTION_CAUSE);
-            if (intent.getExtras().getString(ConstantUtil.EXCEPTION) != null &&
+            String exceptionCause = intent.getExtras().getString(ConstantUtil.ExceptionsLogs.EXCEPTION_CAUSE);
+            if (intent.getExtras().getString(ConstantUtil.ExceptionsLogs.EXCEPTION) != null &&
                     exceptionCause != null) {
-                if(exceptionCause.equalsIgnoreCase(ConstantUtil.RESPONSE_EXCEPTION_TITLE)){
-                    listener.onPaymentException(ConstantUtil.RESPONSE_EXCEPTION_TITLE,
-                            ConstantUtil.PAYMENT_VALIDATION_FAILED);
+                if(exceptionCause.equalsIgnoreCase(ConstantUtil.ExceptionsLogs.RESPONSE_EXCEPTION_TITLE)){
+                    listener.onPaymentException(ConstantUtil.ExceptionsLogs.RESPONSE_EXCEPTION_TITLE,
+                            ConstantUtil.ExceptionsLogs.PAYMENT_VALIDATION_FAILED);
                     return;
                 }
-                listener.onPaymentException(intent.getExtras().getString(ConstantUtil.EXCEPTION_CAUSE),
-                        intent.getExtras().getString(ConstantUtil.EXCEPTION));
+                listener.onPaymentException(intent.getExtras().getString(ConstantUtil.ExceptionsLogs.EXCEPTION_CAUSE),
+                        intent.getExtras().getString(ConstantUtil.ExceptionsLogs.EXCEPTION));
             } else {
-                listener.onPaymentException(ConstantUtil.RESPONSE_EXCEPTION_TITLE,
-                        ConstantUtil.DECODE_JSON_LOG_MESSAGE);
+                setDecodeJsonError(listener);
             }
             return;
         }
@@ -80,8 +102,10 @@ public class PaymentResponse {
     }
 
     public static PaymentReturnedData checkIfDummy(String response, PaymentResponseListener listener){
-        if (!response.equalsIgnoreCase("dummy") &&
-                !response.equalsIgnoreCase(ConstantUtil.STATUS_CANCELLED)) {
+        if (
+                !response.equalsIgnoreCase("dummy") &&
+                !response.equalsIgnoreCase(ConstantUtil.ReturnedJson.STATUS_CANCELLED)
+        ) {
             return decodeJSON(response, listener);
         }
         return null;
@@ -116,10 +140,8 @@ public class PaymentResponse {
         PaymentReturnedData result = null;
         try {
             result = gson.fromJson(response, PaymentReturnedData.class);
-        } catch (Exception e) {
-            listener.onPaymentException(ConstantUtil.RESPONSE_EXCEPTION_TITLE,
-                    ConstantUtil.DECODE_JSON_LOG_MESSAGE);
-            PaymentResultFlag.getApplicationInstance().setPaymentRequest(null);
+        } catch (JsonSyntaxException e) {
+            setDecodeJsonError(listener);
         }
         return result;
     }
@@ -153,101 +175,134 @@ public class PaymentResponse {
      */
     @VisibleForTesting
     static void validatePaymentResponse(PaymentReturnedData result, PaymentResponseListener listener, AuthorizationResponse responseService) {
-
         ATHMPayment paymentRequest = PaymentResultFlag.getApplicationInstance().getPaymentRequest();
-      //  String ecommerceAppName = Util.getPrefsString(ConstantUtil.ECOMMERCE_APP_NAME, paymentRequest.getContext());
         PaymentResultFlag.getApplicationInstance().setPaymentRequest(null);
         if (result == null || result.getTotal() == 0.0) {
             result = setRequestData(paymentRequest, result);
         }
 
-        String status;
-        if (result.getStatus() == null) {
-            status = "PAYMENT NOT FOUND";
-        } else {
-            status = result.getStatus().replace("PAYMENT", "");
+        String status = getStatus(result, responseService);
+        if (responseService != null) {
+            updateResultFromService(result, responseService, status, false);
         }
 
-        if(responseService != null){
-            if(!responseService.getStatus().equalsIgnoreCase("error")){
-                if(responseService.getData() != null  && responseService.getData().getEcommerceStatus().equals("COMPLETED")){
-                    status = "COMPLETED";
-                    result.setReferenceNumber(responseService.getData().getReferenceNumber() != null ? responseService.getData().getReferenceNumber() : "");
-                    result.setDailyTransactionID(responseService.getData().getDailyTransactionID() != null ? responseService.getData().getDailyTransactionID() : "");
-                    result.setNetAmount(responseService.getData().getNetAmount() != null ? responseService.getData().getNetAmount() : 0.0);
-                    result.setFee(responseService.getData().getFee() != null ? responseService.getData().getFee() : 0.0);
+        notifyListenerByStatus(status, result, listener);
+    }
 
-                    result.setMetadata1(responseService.getData().getMetadata1() != null ? responseService.getData().getMetadata1() : "");
-                    result.setMetadata2(responseService.getData().getMetadata2() != null ? responseService.getData().getMetadata2() : "");
+    @VisibleForTesting
+    static void validatePaymentResponse(PaymentResponseListener listener, AuthorizationResponse responseService) {
+        PaymentResultFlag.getApplicationInstance().setPaymentRequest(null);
+        PaymentReturnedData result = new PaymentReturnedData();
 
-                    sendEventToNewRelic(ConstantUtil.NW_RESPONSE_SUCCESS_PAYMENT,
-                            responseService.getData().getEcommerceId(),
-                            status,
-                            PaymentResultFlag.getApplicationInstance().getEcommerceAppName(),
-                            ConstantUtil.BUILD_TYPE
-                    );
-                }else{
-                    status = "CANCELLED";
-                }
-            }else{
-                status = "FAILED";
-                String schemeForNR = PaymentResultFlag.getApplicationInstance().getEcommerceAppName();
-                schemeForNR = schemeForNR != null ? schemeForNR : "N/A";
-                sendEventToNewRelic(ConstantUtil.NW_RESPONSE_FAILED_PAYMENT,
-                        responseService.getData() != null ? responseService.getData().getEcommerceId() : "N/A",
-                        responseService.getStatus(),
-                        schemeForNR,
-                        ConstantUtil.BUILD_TYPE
-                );
+        String status = getStatus(null, responseService);
+        if (responseService != null) {
+            updateResultFromService(result, responseService, status, true);
+        }
+
+        notifyListenerByStatus(status, result, listener);
+    }
+
+    private static String getStatus(@Nullable PaymentReturnedData result, AuthorizationResponse responseService) {
+        String status = (result == null || result.getStatus() == null) ? "PAYMENT NOT FOUND" : result.getStatus().replace("PAYMENT", "");
+
+        if (responseService != null) {
+            if (!responseService.getStatus().equalsIgnoreCase("error")) {
+                status = handleSuccessStatus(responseService);
+            } else {
+                status = handleErrorStatus(responseService);
             }
-
         }
+        return status;
+    }
 
+    private static String handleSuccessStatus(AuthorizationResponse responseService) {
+        if (responseService.getData() != null && "COMPLETED".equals(responseService.getData().getEcommerceStatus())) {
+            sendEventToNewRelic(ConstantUtil.NW_RESPONSE_SUCCESS_PAYMENT,
+                    responseService.getData().getEcommerceId(),
+                    "COMPLETED",
+                    PaymentResultFlag.getApplicationInstance().getEcommerceAppName(),
+                    ConstantUtil.BUILD_TYPE
+            );
+            return "COMPLETED";
+        } else {
+            return "CANCELLED";
+        }
+    }
+
+    private static String handleErrorStatus(AuthorizationResponse responseService) {
+        String schemeForNR = PaymentResultFlag.getApplicationInstance().getEcommerceAppName();
+        schemeForNR = schemeForNR != null ? schemeForNR : "N/A";
+        sendEventToNewRelic(ConstantUtil.NW_RESPONSE_FAILED_PAYMENT,
+                responseService.getData() != null ? responseService.getData().getEcommerceId() : "N/A",
+                responseService.getStatus(),
+                schemeForNR,
+                ConstantUtil.BUILD_TYPE
+        );
+        return "FAILED";
+    }
+
+    private static void updateResultFromService(
+            PaymentReturnedData result,
+            AuthorizationResponse responseService,
+            String status,
+            boolean withOutResult
+    ) {
+        if (!"COMPLETED".equals(status) || responseService.getData() == null) return;
+
+        var data = responseService.getData();
+        result.setReferenceNumber(defaultString(data.getReferenceNumber()));
+        result.setDailyTransactionID(defaultString(data.getDailyTransactionID()));
+        result.setNetAmount(defaultDouble(data.getNetAmount()));
+        result.setFee(defaultDouble(data.getFee()));
+        result.setMetadata1(defaultString(data.getMetadata1()));
+        result.setMetadata2(defaultString(data.getMetadata2()));
+
+        if (withOutResult){
+            result.setTotal(defaultDouble(data.getTotal()));
+            result.setSubtotal(defaultDouble(data.getSubtotal()));
+            result.setTax(defaultDouble(data.getTax()));
+
+            if(data.getItems() instanceof ArrayList)
+                result.setItems((ArrayList<Items>) data.getItems());
+        }
+    }
+
+    private static String defaultString(String value) {
+        return value != null ? value : "";
+    }
+
+    private static double defaultDouble(Double value) {
+        return value != null ? value : 0.0;
+    }
+
+    private static void notifyListenerByStatus(String status, PaymentReturnedData result, PaymentResponseListener listener) {
+        Date date = getDateFormat(result.getDate());
         switch (status) {
             case "COMPLETED":
-                listener.onCompletedPayment(getDateFormat(result.getDate()),
-                        result.getReferenceNumber(), result.getDailyTransactionID(),
-                        result.getName(), result.getPhoneNumber(), result.getEmail(),
-                        result.getTotal(), result.getTax(), result.getSubtotal(), result.getFee(),
-                        result.getNetAmount(), result.getMetadata1(), result.getMetadata2(),
-                        result.getPaymentId(), result.getItemsSelectedList());
+                listener.onCompletedPayment(date, result);
                 break;
             case "EXPIRED":
-                listener.onExpiredPayment(getDateFormat(result.getDate()),
-                        result.getReferenceNumber(), result.getDailyTransactionID(),
-                        result.getName(), result.getPhoneNumber(), result.getEmail(),
-                        result.getTotal(), result.getTax(), result.getSubtotal(), result.getFee(),
-                        result.getNetAmount(), result.getMetadata1(), result.getMetadata2(),
-                        result.getPaymentId(), result.getItemsSelectedList());
+                listener.onExpiredPayment(date, result);
+
                 sendEventToNewRelic(ConstantUtil.NW_RESPONSE_FAILED_PAYMENT,
                         ConstantUtil.NW_RESPONSE_EXPIRED_PAYMENT,
                         status,
                         PaymentResultFlag.getApplicationInstance().getEcommerceAppName(),
                         ConstantUtil.BUILD_TYPE
                 );
-
                 break;
             case "CANCELLED":
-                listener.onCancelledPayment(getDateFormat(result.getDate()),
-                        result.getReferenceNumber(), result.getDailyTransactionID(),
-                        result.getName(), result.getPhoneNumber(), result.getEmail(),
-                        result.getTotal(), result.getTax(), result.getSubtotal(), result.getFee(),
-                        result.getNetAmount(), result.getMetadata1(), result.getMetadata2(),
-                        result.getPaymentId(), result.getItemsSelectedList());
-                sendEventToNewRelic(ConstantUtil.NW_RESPONSE_FAILED_PAYMENT,
-                        ConstantUtil.NW_RESPONSE_CANCELLED_PAYMENT,
-                        status,
-                        PaymentResultFlag.getApplicationInstance().getEcommerceAppName(),
-                        ConstantUtil.BUILD_TYPE
+                listener.onCancelledPayment(date, result);
+                sendEventToNewRelic(
+                    ConstantUtil.NW_RESPONSE_FAILED_PAYMENT,
+                    ConstantUtil.NW_RESPONSE_CANCELLED_PAYMENT,
+                    status,
+                    PaymentResultFlag.getApplicationInstance().getEcommerceAppName(),
+                    ConstantUtil.BUILD_TYPE
                 );
                 break;
             default:
-                listener.onFailedPayment(getDateFormat(result.getDate()),
-                        result.getReferenceNumber(), result.getDailyTransactionID(),
-                        result.getName(), result.getPhoneNumber(), result.getEmail(),
-                        result.getTotal(), result.getTax(), result.getSubtotal(), result.getFee(),
-                        result.getNetAmount(), result.getMetadata1(), result.getMetadata2(),
-                        result.getPaymentId(), result.getItemsSelectedList());
+                listener.onFailedPayment(date, result);
                 break;
         }
     }

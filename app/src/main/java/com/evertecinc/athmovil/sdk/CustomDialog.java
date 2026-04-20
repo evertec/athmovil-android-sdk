@@ -58,8 +58,8 @@ public class CustomDialog extends DialogFragment {
         CharSequence message = arg.getCharSequence("message");
         id = Constants.RequestId.values()[arg.getInt("id")];
 
-
-        listener = (DialogResponseListener) activity;
+        if(activity instanceof DialogResponseListener)
+            listener = (DialogResponseListener) activity;
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activity);
         LayoutInflater inflater = activity.getLayoutInflater();
@@ -96,11 +96,13 @@ public class CustomDialog extends DialogFragment {
         dialog.setOnKeyListener((dialog12, keyCode, event) -> keyCode == KeyEvent.KEYCODE_BACK);
 
         dialog.setOnShowListener(dialog1 -> {
-            Button button = ((AlertDialog) dialog1).getButton(AlertDialog.BUTTON_POSITIVE);
-            button.setOnClickListener(view -> {
-                listener.onDialogResponse(etEnterData.getText().toString(), id);
-                dismiss();
-            });
+            if(dialog1 instanceof  AlertDialog){
+                Button button = ((AlertDialog) dialog1).getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(view -> {
+                    listener.onDialogResponse(etEnterData.getText().toString(), id);
+                    dismiss();
+                });
+            }
         });
         return dialog;
     }

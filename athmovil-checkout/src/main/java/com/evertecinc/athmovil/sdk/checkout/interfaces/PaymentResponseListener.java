@@ -1,31 +1,17 @@
 package com.evertecinc.athmovil.sdk.checkout.interfaces;
 
-import com.evertecinc.athmovil.sdk.checkout.objects.Items;
-
-import java.util.ArrayList;
+import com.evertecinc.athmovil.sdk.checkout.objects.PaymentReturnedData;
 import java.util.Date;
 
 public interface PaymentResponseListener {
 
-    void onCompletedPayment(Date date, String referenceNumber, String dailyTransactionID,
-                            String name, String phoneNumber, String email,
-                            Double total, Double tax, Double subtotal, Double fee, Double netAmount,
-                            String metadata1, String metadata2, String paymentId, ArrayList<Items> items);
+    void onCompletedPayment(Date date, PaymentReturnedData result);
 
-    void onCancelledPayment(Date date, String referenceNumber, String dailyTransactionID,
-                            String name, String phoneNumber, String email,
-                            Double total, Double tax, Double subtotal, Double fee, Double netAmount,
-                            String metadata1, String metadata2, String paymentId, ArrayList<Items> items);
+    void onCancelledPayment(Date date, PaymentReturnedData result);
 
-    void onExpiredPayment(Date date, String referenceNumber, String dailyTransactionID,
-                          String name, String phoneNumber, String email,
-                          Double total, Double tax, Double subtotal, Double fee, Double netAmount,
-                          String metadata1, String metadata2, String paymentId, ArrayList<Items> items);
+    void onExpiredPayment(Date date, PaymentReturnedData result);
 
-    void onFailedPayment(Date date, String referenceNumber, String dailyTransactionID,
-                          String name, String phoneNumber, String email,
-                          Double total, Double tax, Double subtotal, Double fee, Double netAmount,
-                          String metadata1, String metadata2, String paymentId, ArrayList<Items> items);
+    void onFailedPayment(Date date, PaymentReturnedData result);
 
     void onPaymentException(String error, String description);
 

@@ -3,6 +3,8 @@ package com.evertecinc.athmovil.sdk;
 import androidx.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.widget.TextView;
+
 import com.evertecinc.athmovil.sdk.databinding.ActivityConfigBinding;
 import static android.view.Gravity.END;
 import androidx.appcompat.app.AppCompatActivity;
@@ -154,29 +156,37 @@ public class ConfigActivity extends AppCompatActivity implements
                 binding.tvSubtotal.setText(TextUtils.concat("$", data));
                 Utils.setPrefsString(Constants.SUBTOTAL_PREF_KEY, data, this);
                 break;
+            default:
+                onDialogResponseDos(data,id);
+                break;
+        }
+    }
+
+    private void updateFieldAndPref(TextView field, String prefKey, String data) {
+        field.setText(data.isEmpty() ? null : data);
+        Utils.setPrefsString(prefKey, data.isEmpty() ? null : data, this);
+    }
+
+    public void onDialogResponseDos(String data, Constants.RequestId id) {
+        switch (id) {
             case TAX:
                 binding.tvTax.setText(TextUtils.concat("$", data));
                 Utils.setPrefsString(Constants.TAX_PREF_KEY, data, this);
                 break;
             case METADATA1:
-                binding.tvMetadata1.setText(data.isEmpty() ? null : data);
-                Utils.setPrefsString(Constants.METADATA1_PREF_KEY, data.isEmpty() ? null :
-                        data, this);
+                updateFieldAndPref(binding.tvMetadata1, Constants.METADATA1_PREF_KEY, data);
                 break;
             case METADATA2:
-                binding.tvMetadata2.setText(data.isEmpty() ? null : data);
-                Utils.setPrefsString(Constants.METADATA2_PREF_KEY, data.isEmpty() ? null :
-                        data, this);
+                updateFieldAndPref(binding.tvMetadata2, Constants.METADATA2_PREF_KEY, data);
                 break;
             case PHONE_NUMBER:
-                binding.tvPhoneNumber.setText(data.isEmpty() ? null : data);
-                Utils.setPrefsString(Constants.PHONE_NUMBER_PREF_KEY, data.isEmpty() ? null :
-                        data, this);
+                updateFieldAndPref(binding.tvPhoneNumber, Constants.PHONE_NUMBER_PREF_KEY, data);
                 break;
             default:
                 break;
         }
     }
+
 
     private void setUpButtonThemeSelection() {
         binding.llThemeContainer.setOnClickListener(view -> {

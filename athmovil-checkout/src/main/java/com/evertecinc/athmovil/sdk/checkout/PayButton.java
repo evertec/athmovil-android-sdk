@@ -68,13 +68,15 @@ public class PayButton extends AppCompatImageButton {
     protected void onDraw(final Canvas canvas) {
         super.onDraw(canvas);
         switch (selectedTheme) {
+            case ORIGINAL:
+                setOriginalButton();
+                break;
             case LIGHT:
                 setLightButton();
                 break;
             case DARK:
                 setDarkButton();
                 break;
-            case ORIGINAL:
             default:
                 setOriginalButton();
                 break;
@@ -106,6 +108,7 @@ public class PayButton extends AppCompatImageButton {
                         getContext().getTheme()));
                 break;
             case DEFAULT:
+                break;
             default:
                 break;
         }
@@ -126,6 +129,7 @@ public class PayButton extends AppCompatImageButton {
                         getContext().getTheme()));
                 break;
             case DEFAULT:
+                break;
             default:
                 break;
         }
@@ -146,6 +150,7 @@ public class PayButton extends AppCompatImageButton {
                         getContext().getTheme()));
                 break;
             case DEFAULT:
+                break;
             default:
                 break;
         }

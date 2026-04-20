@@ -22,9 +22,9 @@ import okhttp3.RequestBody;
 
 public class NewRelicConfig {
 
-    public static final String NR_CONSTANT = ConstantUtil.NR_VARIABLE;
+    public static final String NR_CONSTANT = ConstantUtil.ExceptionsLogs.NR_VARIABLE;
 
-    public static final String URL_CONSTANT = ConstantUtil.NR_URL;
+    public static final String URL_CONSTANT = ConstantUtil.ExceptionsLogs.NR_URL;
 
 
     public static void sendEventToNewRelic(@Nullable String eventType, @Nullable String paymentReference,
@@ -84,7 +84,7 @@ public class NewRelicConfig {
 
     private static void logForDebug(String message) {
         if (BuildConfig.DEBUG) {
-            Log.d(ConstantUtil.LOG_TAG, message);
+            Log.d(ConstantUtil.ExceptionsLogs.LOG_TAG, message);
         }
     }
 

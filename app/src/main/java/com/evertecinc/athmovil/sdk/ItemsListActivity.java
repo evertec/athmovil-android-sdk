@@ -7,6 +7,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.evertecinc.athmovil.sdk.checkout.objects.Items;
 import com.evertecinc.athmovil.sdk.databinding.ActivityItemsBinding;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class ItemsListActivity extends AppCompatActivity {
@@ -22,6 +24,11 @@ public class ItemsListActivity extends AppCompatActivity {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         binding.rvItemsList.setLayoutManager(mLayoutManager);
         binding.rvItemsList.setAdapter(adapter);
-        adapter.loadData((ArrayList<Items>) getIntent().getExtras().getSerializable("items"), true);
+
+        Serializable serializable = getIntent().getSerializableExtra("items");
+
+        if (serializable instanceof ArrayList<?>) {
+            adapter.loadData((ArrayList<Items>) serializable, true);
+        }
     }
 }

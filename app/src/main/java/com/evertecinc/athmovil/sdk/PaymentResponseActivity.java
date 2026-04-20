@@ -3,13 +3,12 @@ package com.evertecinc.athmovil.sdk;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-
 import com.evertecinc.athmovil.sdk.checkout.PaymentResponse;
 import com.evertecinc.athmovil.sdk.checkout.interfaces.PaymentResponseListener;
 import com.evertecinc.athmovil.sdk.checkout.objects.Items;
+import com.evertecinc.athmovil.sdk.checkout.objects.PaymentReturnedData;
 import com.evertecinc.athmovil.sdk.databinding.ActivityPaymentResponseBinding;
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,64 +44,43 @@ public class PaymentResponseActivity extends AppCompatActivity implements Paymen
     }
 
     @Override
-    public void onCancelledPayment(Date date, String referenceNumber, String dailyTransactionID,
-                                   String name, String phoneNumber, String email,
-                                   Double total, Double tax, Double subtotal, Double fee, Double netAmount,
-                                   String metadata1, String metadata2, String paymentId, ArrayList<Items> items) {
+    public void onCancelledPayment(Date date, PaymentReturnedData result) {
 
         binding.tvStatus.setText("CANCELLED");
 
-        setData(date, referenceNumber, dailyTransactionID, name, phoneNumber);
-
-        setDataDos(email, total,tax,subtotal,fee);
-
-        setDataTres(netAmount, metadata1, metadata2, paymentId, items);
+        setAllData(date, result);
     }
 
     @Override
-    public void onExpiredPayment(Date date, String referenceNumber, String dailyTransactionID,
-                                 String name, String phoneNumber, String email,
-                                 Double total, Double tax, Double subtotal, Double fee, Double netAmount,
-                                 String metadata1, String metadata2, String paymentId, ArrayList<Items> items) {
+    public void onExpiredPayment(Date date, PaymentReturnedData result) {
 
         binding.tvStatus.setText("EXPIRED");
 
-        setData(date, referenceNumber, dailyTransactionID, name, phoneNumber);
-
-        setDataDos(email, total,tax,subtotal,fee);
-
-        setDataTres(netAmount, metadata1, metadata2, paymentId, items);
+        setAllData(date, result);
     }
 
     @Override
-    public void onFailedPayment(Date date, String referenceNumber, String dailyTransactionID,
-                               String name, String phoneNumber, String email,
-                               Double total, Double tax, Double subtotal, Double fee, Double netAmount,
-                               String metadata1, String metadata2, String paymentId, ArrayList<Items> items) {
+    public void onFailedPayment(Date date, PaymentReturnedData result) {
 
         binding.tvStatus.setText("FAILED");
 
-        setData(date, referenceNumber, dailyTransactionID, name, phoneNumber);
-
-        setDataDos(email, total,tax,subtotal,fee);
-
-        setDataTres(netAmount, metadata1, metadata2, paymentId, items);
-
+        setAllData(date, result);
     }
 
     @Override
-    public void onCompletedPayment(Date date, String referenceNumber, String dailyTransactionID,
-                                   String name, String phoneNumber, String email,
-                                   Double total, Double tax, Double subtotal, Double fee, Double netAmount,
-                                   String metadata1, String metadata2, String paymentId, ArrayList<Items> items) {
+    public void onCompletedPayment(Date date, PaymentReturnedData result) {
 
         binding.tvStatus.setText("COMPLETED");
 
-        setData(date, referenceNumber, dailyTransactionID, name, phoneNumber);
+        setAllData(date, result);
+    }
 
-        setDataDos(email, total,tax,subtotal,fee);
+    public void setAllData(Date date, PaymentReturnedData result){
+        setData(date, result.getReferenceNumber(), result.getDailyTransactionID(), result.getName(), result.getPhoneNumber());
 
-        setDataTres(netAmount, metadata1, metadata2, paymentId, items);
+        setDataDos(result.getEmail(), result.getTotal(), result.getTax(), result.getSubtotal(), result.getFee());
+
+        setDataTres(result.getNetAmount(), result.getMetadata1(), result.getMetadata2(), result.getPaymentId(), result.getItemsSelectedList());
     }
 
     public void setData(Date date, String referenceNumber, String dailyTransactionID, String name, String phoneNumber){
