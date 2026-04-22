@@ -11,6 +11,8 @@ import com.evertecinc.athmovil.sdk.checkout.PayButton;
 import com.evertecinc.athmovil.sdk.checkout.objects.ATHMPayment;
 import com.evertecinc.athmovil.sdk.checkout.objects.Items;
 import com.evertecinc.athmovil.sdk.databinding.ActivityCartBinding;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -79,7 +81,11 @@ public class CartActivity extends AppCompatActivity {
     }
 
     private void setUpItems() {
-        items = (ArrayList<Items>) getIntent().getExtras().getSerializable("items");
+        Serializable serializable = getIntent().getSerializableExtra("items");
+
+        if (serializable instanceof ArrayList<?>) {
+            items = (ArrayList<Items>) serializable;
+        }
     }
 
     private void showLoader(){
@@ -96,11 +102,8 @@ public class CartActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(savedBuildType)) {
             savedBuildType = getString(R.string.production);
         }
-        if (savedBuildType.equalsIgnoreCase(getString(R.string.pilot))) {
-        buildType = ".piloto";
-        } else if (savedBuildType.equalsIgnoreCase(getString(R.string.production))) {
-            buildType = "";
-        }
+
+        buildType = "";
     }
 
     private void sendData() {

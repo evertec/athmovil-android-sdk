@@ -163,23 +163,25 @@ public class PaymentReturnedData {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PaymentReturnedData data = (PaymentReturnedData) o;
-        return Objects.equals(referenceNumber, data.referenceNumber) &&
-                Objects.equals(status, data.status) &&
-                Objects.equals(subtotal, data.subtotal) &&
-                Objects.equals(total, data.total) &&
-                Objects.equals(tax, data.tax) &&
-                Objects.equals(metadata1, data.metadata1) &&
-                Objects.equals(metadata2, data.metadata2) &&
-                Objects.equals(date, data.date) &&
-                Objects.equals(dailyTransactionID, data.dailyTransactionID) &&
-                Objects.equals(name, data.name) &&
-                Objects.equals(phoneNumber, data.phoneNumber) &&
-                Objects.equals(email, data.email) &&
-                Objects.equals(fee, data.fee) &&
-                Objects.equals(netAmount, data.netAmount) &&
-                Objects.equals(items, data.items);
-
+        if(o instanceof  PaymentReturnedData){
+            PaymentReturnedData data = (PaymentReturnedData) o;
+            return Objects.equals(referenceNumber, data.referenceNumber) &&
+                    Objects.equals(status, data.status) &&
+                    Objects.equals(subtotal, data.subtotal) &&
+                    Objects.equals(total, data.total) &&
+                    Objects.equals(tax, data.tax) &&
+                    Objects.equals(metadata1, data.metadata1) &&
+                    Objects.equals(metadata2, data.metadata2) &&
+                    Objects.equals(date, data.date) &&
+                    Objects.equals(dailyTransactionID, data.dailyTransactionID) &&
+                    Objects.equals(name, data.name) &&
+                    Objects.equals(phoneNumber, data.phoneNumber) &&
+                    Objects.equals(email, data.email) &&
+                    Objects.equals(fee, data.fee) &&
+                    Objects.equals(netAmount, data.netAmount) &&
+                    Objects.equals(items, data.items);
+        }
+        return false;
     }
 
     @Override

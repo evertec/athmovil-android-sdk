@@ -2,6 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.INTERNET" />
+    <permission android:name="com.evertecinc.athmovil.sdk.PAYMENT_RESPONSE" android:protectionLevel="normal" />
+
+    <uses-sdk
+        android:minSdkVersion="21"
+        android:targetSdkVersion="34" />
+
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"

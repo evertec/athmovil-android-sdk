@@ -43,36 +43,27 @@ public class PaymentResponseUT {
     public void WhenValidatingPaymentResponse_GivenCancelledPaymentResponse_ThenReturnOnCancelledPaymentData() {
         PaymentReturnedData result = gson.fromJson(setCancelledPaymentResponse(), PaymentReturnedData.class);
         PaymentResponse.validatePaymentResponse(result, listener, null);
-        verify(listener, only()).onCancelledPayment(Util.getDateFormat(result.getDate()), result.getReferenceNumber(), result.getDailyTransactionID(),
-                result.getName(), result.getPhoneNumber(), result.getEmail(),
-                result.getTotal(), result.getTax(), result.getSubtotal(), result.getFee(), result.getNetAmount(),
-                result.getMetadata1(), result.getMetadata2(), result.getPaymentId(), result.getItemsSelectedList());
+        verify(listener, only()).onCancelledPayment(Util.getDateFormat(result.getDate()), result);
     }
 
     @Test
     public void WhenValidatingPaymentResponse_GivenExpiredPaymentResponse_ThenReturnOnExpiredPaymentData() {
         PaymentReturnedData result = gson.fromJson(setExpiredPaymentResponse(), PaymentReturnedData.class);
         PaymentResponse.validatePaymentResponse(result, listener, null);
-        verify(listener, only()).onExpiredPayment(Util.getDateFormat(result.getDate()), result.getReferenceNumber(), result.getDailyTransactionID(),
-                result.getName(), result.getPhoneNumber(), result.getEmail(),
-                result.getTotal(), result.getTax(), result.getSubtotal(), result.getFee(), result.getNetAmount(),
-                result.getMetadata1(), result.getMetadata2(), result.getPaymentId(), result.getItemsSelectedList());
+        verify(listener, only()).onExpiredPayment(Util.getDateFormat(result.getDate()), result);
     }
 
     @Test
     public void WhenValidatingPaymentResponse_GivenCompletedPaymentResponse_ThenReturnOnCompletedPaymentData() {
         PaymentReturnedData result = gson.fromJson(setCompletedPaymentResponse(), PaymentReturnedData.class);
         PaymentResponse.validatePaymentResponse(result, listener, null);
-        verify(listener, only()).onCompletedPayment(Util.getDateFormat(result.getDate()), result.getReferenceNumber(), result.getDailyTransactionID(),
-                result.getName(), result.getPhoneNumber(), result.getEmail(),
-                result.getTotal(), result.getTax(), result.getSubtotal(), result.getFee(), result.getNetAmount(),
-                result.getMetadata1(), result.getMetadata2(), result.getPaymentId(), result.getItemsSelectedList());
+        verify(listener, only()).onCompletedPayment(Util.getDateFormat(result.getDate()), result);
     }
 
     @Test
     public void WhenValidatingPaymentResponse_GivenBadPaymentResponse_ThenReturnOnErrorData() {
         PaymentResponse.decodeJSON(setExceptionError(), listener);
-        verify(listener, only()).onPaymentException(ConstantUtil.RESPONSE_EXCEPTION_TITLE, ConstantUtil.DECODE_JSON_LOG_MESSAGE);
+        verify(listener, only()).onPaymentException(ConstantUtil.ExceptionsLogs.RESPONSE_EXCEPTION_TITLE, ConstantUtil.ExceptionsLogs.DECODE_JSON_LOG_MESSAGE);
     }
 
     private String setCancelledPaymentResponse() {

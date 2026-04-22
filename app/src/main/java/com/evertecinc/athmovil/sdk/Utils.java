@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.evertecinc.athmovil.sdk.checkout.objects.Items;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class Utils {
             final SharedPreferences.Editor editor = prefs.edit();
             editor.putString(key, value);
             editor.apply();
-        } catch (Exception e){
+        } catch (ClassCastException | NullPointerException e){
             Log.e(TAG, "setPrefsString: " + e);
         }
     }
@@ -36,7 +37,7 @@ public class Utils {
         try {
             final SharedPreferences prefs = context.getSharedPreferences(CHECKOUT_DEMO_PREFS_KEY, Context.MODE_PRIVATE);
             savedValue = prefs.getString(key, null);
-        } catch (Exception e){
+        } catch (ClassCastException | NullPointerException e){
             Log.e(TAG, "getPrefsString: " + e);
         }
         return savedValue;
@@ -75,7 +76,7 @@ public class Utils {
                     return NumberFormat.getCurrencyInstance(Locale.US).format(fBalance);
                 }
             }
-        } catch (final Exception utilsError) {
+        } catch (final NumberFormatException | NullPointerException utilsError) {
             Log.w("BalanceFormatException", utilsError);
         }
 
@@ -87,7 +88,7 @@ public class Utils {
         ArrayList<Items> items;
         try {
             items = gson.fromJson(itemList, new TypeToken<List<Items>>(){}.getType());
-        }catch (Exception jsonError){
+        }catch (JsonSyntaxException | NullPointerException jsonError){
             Log.e("JSON Convert Error", jsonError.getMessage());
             return null;
         }

@@ -10,7 +10,7 @@ import com.evertecinc.athmovil.sdk.checkout.objects.Items;
 import com.evertecinc.athmovil.sdk.checkout.utils.JsonUtil;
 import com.evertecinc.athmovil.sdk.databinding.ActivityMainBinding;
 import java.util.ArrayList;
-import static com.evertecinc.athmovil.sdk.Constants.*;
+import static com.evertecinc.athmovil.sdk.Constants.ITEMS_PREF_KEY;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;

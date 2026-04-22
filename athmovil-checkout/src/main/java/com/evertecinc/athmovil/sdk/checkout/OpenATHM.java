@@ -20,6 +20,7 @@ import com.evertecinc.athmovil.sdk.checkout.objects.Items;
 import com.evertecinc.athmovil.sdk.checkout.objects.PaymentResultFlag;
 import com.evertecinc.athmovil.sdk.checkout.objects.PaymentReturnedData;
 import com.evertecinc.athmovil.sdk.checkout.objects.payment.AuthorizationResponse;
+import com.evertecinc.athmovil.sdk.checkout.objects.payment.FindPaymentRequest;
 import com.evertecinc.athmovil.sdk.checkout.objects.payment.PaymentErrorResponse;
 import com.evertecinc.athmovil.sdk.checkout.objects.payment.PaymentRequest;
 import com.evertecinc.athmovil.sdk.checkout.objects.payment.PaymentResponseObject;
@@ -34,6 +35,7 @@ import com.google.gson.JsonSyntaxException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -43,7 +45,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import static com.evertecinc.athmovil.sdk.checkout.utils.ConstantUtil.COM_EVERTEC_ATHMOVIL_ANDROID;
+import static com.evertecinc.athmovil.sdk.checkout.utils.ConstantUtil.BasicData.COM_EVERTEC_ATHMOVIL_ANDROID;
 import static com.evertecinc.athmovil.sdk.checkout.utils.NewRelicConfig.sendEventToNewRelic;
 
 import androidx.annotation.NonNull;
@@ -67,7 +69,7 @@ public class OpenATHM {
      * @param ATHMPayment - Object containing the payment data
      */
     public static void validateData(@NonNull ATHMPayment ATHMPayment, @NonNull Context context) {
-        Util.setPrefsString(ConstantUtil.PUBLIC_TOK, ATHMPayment.getPublicToken(), context);
+        Util.setPrefsString(ConstantUtil.BasicData.PUBLIC_TOK, ATHMPayment.getPublicToken(), context);
         if(ATHMPayment.getPublicToken().equalsIgnoreCase("dummy")){
             sendData(ATHMPayment, context);
         }else{
@@ -79,10 +81,11 @@ public class OpenATHM {
         PaymentResultFlag.getApplicationInstance().setPaymentRequest(ATHMPayment);
         PaymentResultFlag.getApplicationInstance().setEcommerceAppName(ecommerceAppName);
         try {
+            buildType = ATHMPayment.getBuildType();
             validateATHMPayment(ATHMPayment);
             defineTimeout(ATHMPayment);
             defineResponse(ATHMPayment);
-        } catch (Exception e) {
+        } catch (NullATHMPaymentObjectException | NullApplicationContextException  | InvalidPaymentRequestException | JsonEncoderException e) {
             sendEventToNewRelic(ConstantUtil.NW_INIT_PAYMENT_FAILED,
                    e.getMessage(),
                    ConstantUtil.TOKEN_FOR_FAILURE,
@@ -98,16 +101,16 @@ public class OpenATHM {
      * @param ATHMPayment - Object containing the payment data
      */
     public static void defineResponse(ATHMPayment ATHMPayment) throws JsonEncoderException {
-        if (ATHMPayment.getPublicToken().equalsIgnoreCase(ConstantUtil.TOKEN_FOR_SUCCESS)) {
+        if (ATHMPayment.getPublicToken().equalsIgnoreCase(ConstantUtil.ReturnedJson.TOKEN_FOR_SUCCESS)) {
 
-            definePaymentReturnedData(ATHMPayment, ConstantUtil.STATUS_SUCCESS, ConstantUtil.REFERENCE_NUMBER,
+            definePaymentReturnedData(ATHMPayment, ConstantUtil.ReturnedJson.STATUS_SUCCESS, ConstantUtil.ReturnedJson.REFERENCE_NUMBER,
                     ATHMPayment.getTotal(), ATHMPayment.getTax(), ATHMPayment.getSubtotal(),
                     ATHMPayment.getMetadata1(), ATHMPayment.getMetadata2(), ATHMPayment.getPaymentId(),
                     ATHMPayment.getItems());
 
-        } else if (ATHMPayment.getPublicToken().equalsIgnoreCase(ConstantUtil.TOKEN_FOR_FAILURE)) {
+        } else if (ATHMPayment.getPublicToken().equalsIgnoreCase(ConstantUtil.ReturnedJson.TOKEN_FOR_FAILURE)) {
 
-            definePaymentReturnedData(ATHMPayment, ConstantUtil.STATUS_CANCELLED, null,
+            definePaymentReturnedData(ATHMPayment, ConstantUtil.ReturnedJson.STATUS_CANCELLED, null,
                     ATHMPayment.getTotal(), ATHMPayment.getTax(), ATHMPayment.getSubtotal(),
                     ATHMPayment.getMetadata1(), ATHMPayment.getMetadata2(), ATHMPayment.getPaymentId(),
                     ATHMPayment.getItems());
@@ -117,8 +120,8 @@ public class OpenATHM {
                 logForDebug(businessInfoJson);
                 execute(ATHMPayment.getContext(), businessInfoJson, ATHMPayment.getTimeout());
             } else {
-                logForDebug(ConstantUtil.ENCODE_JSON_LOG_MESSAGE);
-                throw new JsonEncoderException(ConstantUtil.ENCODE_JSON_LOG_MESSAGE);
+                logForDebug(ConstantUtil.ExceptionsLogs.ENCODE_JSON_LOG_MESSAGE);
+                throw new JsonEncoderException(ConstantUtil.ExceptionsLogs.ENCODE_JSON_LOG_MESSAGE);
             }
         }
     }
@@ -162,11 +165,11 @@ public class OpenATHM {
      */
     private static void defineTimeout(ATHMPayment ATHMPayment) {
         if (ATHMPayment.getTimeout() <= 0) {
-            ATHMPayment.setTimeout(ConstantUtil.MAX_TIMEOUT_SECONDS);
-        } else if (ATHMPayment.getTimeout() < ConstantUtil.MIN_TIMEOUT_SECONDS) {
-            ATHMPayment.setTimeout(ConstantUtil.MIN_TIMEOUT_SECONDS);
-        } else if (ATHMPayment.getTimeout() > ConstantUtil.MAX_TIMEOUT_SECONDS) {
-            ATHMPayment.setTimeout(ConstantUtil.MAX_TIMEOUT_SECONDS);
+            ATHMPayment.setTimeout(ConstantUtil.BasicData.MAX_TIMEOUT_SECONDS);
+        } else if (ATHMPayment.getTimeout() < ConstantUtil.BasicData.MIN_TIMEOUT_SECONDS) {
+            ATHMPayment.setTimeout(ConstantUtil.BasicData.MIN_TIMEOUT_SECONDS);
+        } else if (ATHMPayment.getTimeout() > ConstantUtil.BasicData.MAX_TIMEOUT_SECONDS) {
+            ATHMPayment.setTimeout(ConstantUtil.BasicData.MAX_TIMEOUT_SECONDS);
         }
     }
 
@@ -182,16 +185,16 @@ public class OpenATHM {
             throws NullATHMPaymentObjectException, NullApplicationContextException, InvalidPaymentRequestException {
         ExceptionUtil exceptionUtil = new ExceptionUtil();
         if (ATHMPayment == null) {
-            logForDebug(ConstantUtil.NULL_ATHMPAYMENT_LOG_MESSAGE);
-            throw new NullATHMPaymentObjectException(ConstantUtil.NULL_ATHMPAYMENT_LOG_MESSAGE);
+            logForDebug(ConstantUtil.ExceptionsLogs.NULL_ATHMPAYMENT_LOG_MESSAGE);
+            throw new NullATHMPaymentObjectException(ConstantUtil.ExceptionsLogs.NULL_ATHMPAYMENT_LOG_MESSAGE);
         }
         if (!exceptionUtil.validateRequest(ATHMPayment)) {
             logForDebug(exceptionUtil.getExceptionMessage());
             throw new InvalidPaymentRequestException(exceptionUtil.getExceptionMessage());
         }
         if (ATHMPayment.getContext() == null) {
-            logForDebug(ConstantUtil.NULL_CONTEXT_LOG_MESSAGE);
-            throw new NullApplicationContextException(ConstantUtil.NULL_CONTEXT_LOG_MESSAGE);
+            logForDebug(ConstantUtil.ExceptionsLogs.NULL_CONTEXT_LOG_MESSAGE);
+            throw new NullApplicationContextException(ConstantUtil.ExceptionsLogs.NULL_CONTEXT_LOG_MESSAGE);
         }
     }
 
@@ -209,6 +212,7 @@ public class OpenATHM {
         PackageInfo athmInfo;
         int athmVersionCode = 0;
 
+
         String athmBundleId = COM_EVERTEC_ATHMOVIL_ANDROID + buildType;
 
         Intent intent = context.getPackageManager().getLaunchIntentForPackage(athmBundleId);
@@ -225,13 +229,13 @@ public class OpenATHM {
                     );
             logForDebug(e.getMessage());
         }
-        if (intent == null || athmVersionCode <= ConstantUtil.ATH_MOVIL_REQUIRED_VERSION_CODE) {
+        if (intent == null || athmVersionCode <= ConstantUtil.BasicData.ATH_MOVIL_REQUIRED_VERSION_CODE) {
             intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(ConstantUtil.ATH_MOVIL_MARKET_URL));
+            intent.setData(Uri.parse(ConstantUtil.BasicData.ATH_MOVIL_MARKET_URL));
         }
-        intent.putExtra((ConstantUtil.BUNDLE), context.getPackageName());
-        intent.putExtra(ConstantUtil.JSON_DATA_KEY, json);
-        intent.putExtra(ConstantUtil.PAYMENT_DURATION_TIME_KEY, timeout);
+        intent.putExtra((ConstantUtil.BasicData.BUNDLE), context.getPackageName());
+        intent.putExtra(ConstantUtil.BasicData.JSON_DATA_KEY, json);
+        intent.putExtra(ConstantUtil.BasicData.PAYMENT_DURATION_TIME_KEY, timeout);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         context.startActivity(intent);
@@ -246,14 +250,14 @@ public class OpenATHM {
     private static void showResults(Context context, String json, String callbackSchema, Exception exception) {
         String appId = context.getPackageName() + "." + callbackSchema;
         Intent intent = new Intent(appId);
-        intent.putExtra(ConstantUtil.RETURNED_JSON_KEY, json);
+        intent.putExtra(ConstantUtil.ReturnedJson.RETURNED_JSON_KEY, json);
         if (exception != null && exception.getMessage() != null) {
-            intent.putExtra(ConstantUtil.RETURNED_JSON_KEY, ConstantUtil.EXCEPTION);
-            intent.putExtra(ConstantUtil.EXCEPTION_CAUSE, ConstantUtil.REQUEST_EXCEPTION_TITLE);
-            if (exception.getMessage().equalsIgnoreCase(ConstantUtil.PAYMENT_VALIDATION_FAILED)) {
-                intent.putExtra(ConstantUtil.EXCEPTION_CAUSE, ConstantUtil.RESPONSE_EXCEPTION_TITLE);
+            intent.putExtra(ConstantUtil.ReturnedJson.RETURNED_JSON_KEY, ConstantUtil.ExceptionsLogs.EXCEPTION);
+            intent.putExtra(ConstantUtil.ExceptionsLogs.EXCEPTION_CAUSE, ConstantUtil.ExceptionsLogs.REQUEST_EXCEPTION_TITLE);
+            if (exception.getMessage().equalsIgnoreCase(ConstantUtil.ExceptionsLogs.PAYMENT_VALIDATION_FAILED)) {
+                intent.putExtra(ConstantUtil.ExceptionsLogs.EXCEPTION_CAUSE, ConstantUtil.ExceptionsLogs.RESPONSE_EXCEPTION_TITLE);
             }
-            intent.putExtra(ConstantUtil.EXCEPTION, exception.getMessage());
+            intent.putExtra(ConstantUtil.ExceptionsLogs.EXCEPTION, exception.getMessage());
         }
         context.startActivity(intent);
     }
@@ -265,7 +269,7 @@ public class OpenATHM {
      */
     private static void logForDebug(String message) {
         if (BuildConfig.DEBUG) {
-            Log.d(ConstantUtil.LOG_TAG, message);
+            Log.d(ConstantUtil.ExceptionsLogs.LOG_TAG, message);
         }
     }
 
@@ -278,7 +282,7 @@ public class OpenATHM {
         ecommerceAppName = GetApplicationNameUtil.getApplicationName(context);
         Util.setPrefsString(ConstantUtil.ECOMMERCE_APP_NAME, ecommerceAppName, context);
 
-        String url = ConstantUtil.AWS_URL_PAYMENT_PRO;
+        String url = getUrlEnvironment(payment.getBuildType());
 
         Retrofit retrofit = retrofitInstance("https://"+url);
         postsService = retrofit.create(PostService.class);
@@ -292,53 +296,16 @@ public class OpenATHM {
                                    @NonNull Response<PaymentResponseObject> response) {
                 hideLoading();
                 try {
-                    String requestJson = JsonUtil.toJsonAnyObject(response.body());
-                    logForDebug(requestJson);
-
-                    if (response.isSuccessful() && response.body() != null
-                            && !response.body().toString().contains("errorcode")) {
-
-                        logForDebug(JsonUtil.toJsonAnyObject(response.body()));
-                        String ecommerce = response.body().data.getEcommerceId();
-                        String auth_token = response.body().data.getAuth_token();
-
-                        if (!TextUtils.isEmpty(ecommerce) && !TextUtils.isEmpty(auth_token)) {
-                            Util.setPrefsString(ConstantUtil.TOKEN_AUTH_KEY, auth_token, context);
-                            Util.setPrefsString(ConstantUtil.ECOMMERCE_I_D_KEY, ecommerce, context);
-                            payment.setEcommerceId(ecommerce);
-                            sendData(payment, context);
-                            sendEventToNewRelic(ConstantUtil.NW_INIT_PAYMENT_SUCCESS,
-                                    ecommerce,
-                                    ConstantUtil.TOKEN_FOR_SUCCESS,
-                                    ecommerceAppName,
-                                    ConstantUtil.BUILD_TYPE);
-                            return;
-                        }
-                    }
-
-                    if (response.errorBody() != null) {
-                        Gson gson = new GsonBuilder().create();
-                        PaymentErrorResponse mError;
-                        mError = gson.fromJson(response.errorBody().string(), PaymentErrorResponse.class);
-                        verified_error(context, mError);
-                        sendEventToNewRelic(ConstantUtil.NW_INIT_PAYMENT_FAILED,
-                                mError.getMessage(),
-                                ConstantUtil.TOKEN_FOR_FAILURE,
-                                ecommerceAppName,
-                               ConstantUtil.BUILD_TYPE);
-                        return;
-                    }
-
+                    handlePaymentResponse(response, payment, context);
                 } catch (IOException | JsonSyntaxException e) {
                     logForDebug(e.getMessage());
-                    sendEventToNewRelic(ConstantUtil.NW_INIT_PAYMENT_FAILED,
+                    getAlert(context, context.getString(R.string.payment_error_alert_title), context.getString(R.string.payment_error_alert_message));
+                     sendEventToNewRelic(ConstantUtil.NW_INIT_PAYMENT_FAILED,
                             e.getMessage(),
                             ConstantUtil.TOKEN_FOR_FAILURE,
                             ecommerceAppName,
                             ConstantUtil.BUILD_TYPE);
                 }
-
-                getAlert(context, context.getString(R.string.payment_error_alert_title), context.getString(R.string.payment_error_alert_message));
             }
 
             @Override
@@ -353,6 +320,56 @@ public class OpenATHM {
                 getAlert(context, context.getString(R.string.payment_error_alert_title), context.getString(R.string.payment_error_alert_message));
             }
         });
+    }
+
+    private  static void handlePaymentResponse(Response<PaymentResponseObject> response, ATHMPayment payment, Context context) throws IOException {
+        if (isSuccessfulResponse(response)) {
+            processSuccessfulResponse(response, payment, context);
+        } else if (response.errorBody() != null) {
+            processErrorResponse(response, context, payment);
+        }
+    }
+
+    private static boolean isSuccessfulResponse(Response<PaymentResponseObject> response) {
+        return response.isSuccessful() && response.body() != null && !response.body().toString().contains("errorcode");
+    }
+
+    private static void processSuccessfulResponse(Response<PaymentResponseObject> response, ATHMPayment payment, Context context) {
+        logForDebug(JsonUtil.toJsonAnyObject(response.body()));
+        String ecommerce = response.body().data.getEcommerceId();
+        String auth_token = response.body().data.getAuth_token();
+
+        if (!TextUtils.isEmpty(ecommerce) && !TextUtils.isEmpty(auth_token)) {
+            Util.setPrefsString(ConstantUtil.BasicData.TOKEN_AUTH_KEY, auth_token, context);
+            Util.setPrefsString(ConstantUtil.BasicData.ECOMMERCE_I_D_KEY, ecommerce, context);
+            payment.setEcommerceId(ecommerce);
+            sendData(payment, context);
+            sendEventToNewRelic(
+                ConstantUtil.NW_INIT_PAYMENT_SUCCESS,
+                ecommerce,
+                ConstantUtil.TOKEN_FOR_SUCCESS,
+                ecommerceAppName,
+                ConstantUtil.BUILD_TYPE
+            );
+        }
+    }
+
+    private static void processErrorResponse(Response<PaymentResponseObject> response, Context context, ATHMPayment payment) throws IOException {
+        Gson gson = new GsonBuilder().create();
+        PaymentErrorResponse mError = gson.fromJson(response.errorBody().string(), PaymentErrorResponse.class);
+        verified_error(context, mError);
+        sendEventToNewRelic(
+            ConstantUtil.NW_INIT_PAYMENT_FAILED,
+            mError.getMessage(),
+            ConstantUtil.TOKEN_FOR_FAILURE,
+            ecommerceAppName,
+            ConstantUtil.BUILD_TYPE
+        );
+    }
+
+
+    public static String getUrlEnvironment(String buildType){
+        return ConstantUtil.AWS_URL_PAYMENT_PRO;
     }
 
     private static void verified_error(Context context, PaymentErrorResponse mError){
@@ -380,26 +397,35 @@ public class OpenATHM {
                 .build();
     }
 
+    private static String safeString(String value) {
+        return !TextUtils.isEmpty(value) ? value : "";
+    }
+
+    private static double safeDouble(double value) {
+        return value != 0.0 ? value : 0;
+    }
+
     private static PaymentRequest setObjectPaymentRequest(ATHMPayment payment){
         PaymentRequest objRequest = new PaymentRequest();
-        objRequest.setPublicToken(!TextUtils.isEmpty(payment.getPublicToken()) ? payment.getPublicToken() : "");
-        objRequest.setEnv(!TextUtils.isEmpty(payment.getBuildType()) ? payment.getBuildType() : "");
+        objRequest.setPublicToken(safeString(payment.getPublicToken()));
+        objRequest.setEnv(safeString(payment.getBuildType()));
 
         objRequest.setTimeout(payment.getTimeout());
-        objRequest.setTotal(payment.getTotal() != 0.0 ? payment.getTotal() : 0);
-        objRequest.setTax(payment.getTax() != 0.0 ? payment.getTax() : 0);
-        objRequest.setSubtotal(payment.getSubtotal() != 0.0 ? payment.getSubtotal() : 0);
+        objRequest.setTotal(safeDouble(payment.getTotal()));
+        objRequest.setTax(safeDouble(payment.getTax()));
+        objRequest.setSubtotal(safeDouble(payment.getSubtotal()));
 
-        objRequest.setMetadata1(!TextUtils.isEmpty(payment.getMetadata1()) ? payment.getMetadata1() : "");
-        objRequest.setMetadata2(!TextUtils.isEmpty(payment.getMetadata2()) ? payment.getMetadata2() : "");
-        objRequest.setPhoneNumber(!TextUtils.isEmpty(payment.getPhoneNumber()) ? payment.getPhoneNumber() : "");
-        objRequest.setEcommerceId(!TextUtils.isEmpty(payment.getEcommerceId()) ? payment.getEcommerceId() : "");
-        objRequest.setItems(payment.getItems() != null ? payment.getItems() : null);
+        objRequest.setMetadata1(safeString(payment.getMetadata1()));
+        objRequest.setMetadata2(safeString(payment.getMetadata2()));
+        objRequest.setPhoneNumber(safeString(payment.getPhoneNumber()));
+        objRequest.setEcommerceId(safeString(payment.getEcommerceId()));
+        objRequest.setItems(payment.getItems());
 
         String requestJson = JsonUtil.toJsonAnyObject(objRequest);
         logForDebug(requestJson);
         return objRequest;
     }
+
 
     public static void authorizationServices(@NonNull PaymentResponseListener interATH,
                                              @NonNull Context context, @NonNull Intent intent) {
@@ -410,13 +436,13 @@ public class OpenATHM {
             return;
         }
 
-        String token = Util.getPrefsString(ConstantUtil.TOKEN_AUTH_KEY, context);
+        String token = Util.getPrefsString(ConstantUtil.BasicData.TOKEN_AUTH_KEY, context);
         if (TextUtils.isEmpty(token)) {
             hideLoading();
             return;
         }
 
-        String url = ConstantUtil.AWS_URL_PAYMENT_PRO;
+        String url = getUrlEnvironment(payment.getBuildType());
 
         Retrofit retrofit = retrofitInstance("https://"+url);
         postsService = retrofit.create(PostService.class);
@@ -431,11 +457,15 @@ public class OpenATHM {
                 if (response.body() != null) {
                     logForDebug(JsonUtil.toJsonAnyObject(response.body()));
                     PaymentResultFlag.getApplicationInstance().setPaymentRequest(null);
-                    PaymentResponse.validateDataResponse(intent, interATH, response.body());
+                    if(PaymentResponse.verifiedGetExtra(intent)){
+                        PaymentResponse.validateDataResponse(intent, interATH, response.body());
+                    }else{
+                        //In case ATH Móvil app did not return the payment result, we will try to find the payment in order to get the payment result.
+                        findPaymentServices(interATH, context, intent);
+                    }
                 } else {
-                    AuthorizationResponse aut = new AuthorizationResponse();
-                    aut.setStatus("Error");
-                    PaymentResponse.validateDataResponse(intent, interATH, aut);
+                    //In case of failure in authorization service, we will try to find the payment in case ATH Móvil app did not return the payment result.
+                    findPaymentServices(interATH, context, intent);
                 }
             }
 
@@ -448,12 +478,71 @@ public class OpenATHM {
                         ConstantUtil.TOKEN_FOR_FAILURE,
                         ecommerceAppName,
                         ConstantUtil.BUILD_TYPE);
-                PaymentResultFlag.getApplicationInstance().setPaymentRequest(null);
-                AuthorizationResponse aut = new AuthorizationResponse();
-                aut.setStatus("Error");
-                PaymentResponse.validateDataResponse(intent, interATH, aut);
+
+                //In case of failure in authorization service, we will try to find the payment in case ATH Móvil app did not return the payment result.
+                findPaymentServices(interATH, context, intent);
             }
         });
+    }
+
+    public static void findPaymentServices(@NonNull PaymentResponseListener interATH,
+                                             @NonNull Context context, @NonNull Intent intent) {
+        showLoading(context);
+        ATHMPayment payment = PaymentResultFlag.getApplicationInstance().getPaymentRequest();
+        if (payment == null) {
+            hideLoading();
+            return;
+        }
+
+        String token = Util.getPrefsString(ConstantUtil.BasicData.TOKEN_AUTH_KEY, context);
+        String ecommerceID = Util.getPrefsString(ConstantUtil.BasicData.ECOMMERCE_I_D_KEY, context);
+        if (TextUtils.isEmpty(token) && TextUtils.isEmpty(ecommerceID)) {
+            hideLoading();
+            setDefaultError(intent, interATH);
+            return;
+        }
+
+        String url = getUrlEnvironment(payment.getBuildType());
+
+        Retrofit retrofit = retrofitInstance("https://"+url);
+        postsService = retrofit.create(PostService.class);
+
+        FindPaymentRequest findPaymentObject = new FindPaymentRequest(ecommerceID, payment.getPublicToken());
+
+        Call<AuthorizationResponse> call = postsService.findPaymentPost(url,"Bearer "+token, findPaymentObject);
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<AuthorizationResponse> call,
+                                   @NonNull Response<AuthorizationResponse> response) {
+                hideLoading();
+
+                if (response.body() != null) {
+                    logForDebug(JsonUtil.toJsonAnyObject(response.body()));
+                    PaymentResponse.validatePaymentResponse(interATH, response.body());
+                } else {
+                    setDefaultError(intent, interATH);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull Throwable t) {
+                hideLoading();
+                logForDebug(t.getMessage());
+                sendEventToNewRelic(ConstantUtil.NW_RESPONSE_FAILED_PAYMENT,
+                        t.getMessage(),
+                        ConstantUtil.TOKEN_FOR_FAILURE,
+                        ecommerceAppName,
+                        ConstantUtil.BUILD_TYPE);
+                setDefaultError(intent, interATH);
+            }
+        });
+    }
+
+    public static void setDefaultError(@NonNull Intent intent, @NonNull PaymentResponseListener interATH){
+        PaymentResultFlag.getApplicationInstance().setPaymentRequest(null);
+        AuthorizationResponse aut = new AuthorizationResponse();
+        aut.setStatus("Error");
+        PaymentResponse.validateDataResponse(intent, interATH, aut);
     }
 
     public static void getAlert(Context context,String title, String message){
@@ -464,7 +553,6 @@ public class OpenATHM {
                 (dialog, which) -> dialog.dismiss());
         alertDialog.show();
     }
-
 
     /**
      * Creating Retrofit Http Client
@@ -482,7 +570,7 @@ public class OpenATHM {
             builder.addInterceptor(getInterceptorConfiguration());
 
             return builder.build();
-        } catch (Exception e) {
+        } catch (IllegalArgumentException | NullPointerException e) {
             return new OkHttpClient.Builder().build();
         }
     }
