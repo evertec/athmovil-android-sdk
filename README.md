@@ -36,7 +36,7 @@ Before we get started, let’s configure your project:
 ```java
 dependencies {
     …
-    implementation 'com.github.evertec:athmovil-android-sdk:3.0.0'
+    implementation 'com.github.evertec:athmovil-android-sdk:6.1.1'
 	implementation 'com.google.code.gson:gson:2.8.2'
 }
 ```
@@ -108,7 +108,7 @@ public void onClickPayButton(View view) {
     // CallbackSchema example, this should be changed with your application CallbackSchema.
 	athmPayment.setCallbackSchema("scheme"); 
     // PublicToken example, this should be changed with your public token.
-	athmPayment.setPublicToken("fb1f7ae2849a07da1545a89d997d8a435a5f21ac"); 
+	athmPayment.setPublicToken("dummy"); 
 	athmPayment.setTimeout(600);
 	athmPayment.setTotal(1.00);
 	athmPayment.setSubtotal(1.00);
@@ -117,7 +117,7 @@ public void onClickPayButton(View view) {
 	athmPayment.setMetadata2("metadata2 test");
 	athmPayment.setItems(items);
 	athmPayment.setBuildType("");
-	OpenATHM.validateData(payment, context);
+	OpenATHM.validateData(athmPayment, context);
 }
 ```
 
@@ -250,7 +250,7 @@ public void onClickPayButton(View view) {
     ...
 	athmPayment.setPublicToken("dummy");
     ...
-	OpenATHM.validateData(payment, context);
+	OpenATHM.validateData(athmPayment, context);
 }
 ```
 

@@ -117,7 +117,7 @@ public class ConstantUtil {
     public static final String NW_RESPONSE_EXPIRED_PAYMENT = "EXPIRED";
     public static final String NW_RESPONSE_CANCELLED_PAYMENT = "CANCELLED";
 
-    public static final String SDK_VERSION = "6.1.0";
+    public static final String SDK_VERSION = "6.0.1";
 
     public static final String SDK_PLATFORM = "Android_Native";
 
