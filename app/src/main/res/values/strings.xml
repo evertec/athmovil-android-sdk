@@ -22,6 +22,11 @@
     <string name="timeout">Timeout</string>
     <string name="payment_amount">Payment Amount</string>
     <string name="theme">Theme</string>
+    <string name="language">Language</string>
+    <string name="english">English</string>
+    <string name="spanish">Spanish</string>
+    <string name="default_language">Default</string>
+    <string name="sdk_version">SDK Version</string>
 
     <string name="build_type">Environment</string>
     <string name="production">Production</string>

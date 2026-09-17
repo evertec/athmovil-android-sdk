@@ -1,21 +1,34 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 apply plugin: 'com.android.library'
 apply plugin: 'maven-publish'
+apply plugin: 'kotlin-android'
+
+def sdkVersionName = "7.0.0"
 
 android {
-    compileSdk 34
+    compileSdk = 37
     namespace "com.evertecinc.athmovil.sdk.checkout"
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 34
+        minSdkVersion 26
+        targetSdkVersion 37
         versionCode 8
-        versionName "6.1.2"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        versionName sdkVersionName
+        buildConfigField "String", "SDK_VERSION", "\"${sdkVersionName}\""
+        manifestPlaceholders = [ATHM_SDK_VERSION: sdkVersionName]
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         consumerProguardFiles 'consumer-proguard-rules.pro'
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlin {
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_17
+        }
     }
 
     buildTypes {
@@ -37,20 +50,25 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0'
 
     // AndroidX
-    implementation 'androidx.appcompat:appcompat:1.7.0'
-    implementation 'androidx.annotation:annotation:1.9.1'
+    implementation 'androidx.appcompat:appcompat:1.7.1'
+    implementation 'androidx.annotation:annotation:1.10.0'
 
     // Red
-    implementation 'com.google.code.gson:gson:2.10.1'
-    implementation 'com.squareup.retrofit2:retrofit:2.11.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
+    implementation 'com.google.code.gson:gson:2.14.0'
+    implementation 'com.squareup.retrofit2:retrofit:3.0.0'
+    implementation 'com.squareup.retrofit2:converter-gson:3.0.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:5.4.0'
 
     // Test
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.mockito:mockito-core:5.4.0'
+    testImplementation 'org.mockito:mockito-core:5.23.0'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0'
+    testImplementation 'org.mockito.kotlin:mockito-kotlin:6.3.0'
 }
 
 afterEvaluate {
@@ -60,7 +78,7 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.github.evertec'
                 artifactId = 'athmovil-android-sdk'
-                version = '6.1.2'
+                version = sdkVersionName
             }
         }
     }
