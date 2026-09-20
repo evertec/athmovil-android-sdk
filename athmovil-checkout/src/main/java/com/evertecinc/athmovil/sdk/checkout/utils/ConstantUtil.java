@@ -92,7 +92,7 @@ public class ConstantUtil {
         public final static String NULL_METADATA_LOG_MESSAGE = "The metadata data type value is invalid.";
         public final static String NULL_ITEM_METADATA_LOG_MESSAGE = "Item's metadata value is invalid.";
 
-        public final static String SCHEMA_ERROR_MESSAGE = "Url scheme value is invalid.";
+        public final static String SCHEMA_ERROR_MESSAGE = "URL scheme value is invalid.";
         public final static String RESPONSE_EXCEPTION_TITLE = "Error in response";
         public final static String REQUEST_EXCEPTION_TITLE = "Error in request";
         public final static String RESPONSE_NULL_EXCEPTION = "Empty response.";
