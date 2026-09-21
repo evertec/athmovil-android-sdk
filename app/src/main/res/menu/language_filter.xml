@@ -2,12 +2,12 @@
 
    <item
        android:id="@+id/en"
-       android:title="English"
+        android:title="@string/english"
        />
     <item
         android:id="@+id/es"
-        android:title="Spanish"/>
+        android:title="@string/spanish"/>
     <item
         android:id="@+id/de"
-        android:title="Default"/>
+        android:title="@string/default_language"/>
 </menu>

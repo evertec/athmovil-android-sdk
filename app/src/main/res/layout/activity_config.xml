@@ -7,6 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:fitsSystemWindows="true"
         tools:context=".ConfigActivity"
         tools:ignore="SpUsage"
         >
@@ -233,6 +234,50 @@
                             android:layout_weight="1"
                             android:layout_marginStart="16dp"
                             android:text="Original"
+                            android:gravity="end"
+                            />
+                    </LinearLayout>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/dividers"
+                        android:layout_marginStart="16dp"
+                        />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/llLanguageContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/ripple_background_white_rectangle"
+                    android:clickable="true"
+                    android:focusable="true"
+                    >
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_margin="16dp"
+                        android:gravity="center"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/language"
+                            android:textColor="@color/colorAccent"
+                            android:textSize="16dp"
+                            />
+
+                        <TextView
+                            android:id="@+id/tvLanguage"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/secondaryBlack"
+                            android:textSize="14dp"
+                            android:layout_gravity="end"
+                            android:layout_weight="1"
+                            android:layout_marginStart="16dp"
+                            android:text="@string/default_language"
                             android:gravity="end"
                             />
                     </LinearLayout>
@@ -530,10 +575,11 @@
                         android:layout_height="1dp"
                         android:background="@color/dividers"
                         android:layout_marginStart="16dp"
+                        android:layout_gravity="center_vertical"
                         />
                 </LinearLayout>
                 <LinearLayout
-                    android:id="@+id/llSendNull"
+                    android:id="@+id/llSdkVersionContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -541,6 +587,35 @@
                     android:clickable="true"
                     android:focusable="true"
                     >
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_margin="16dp"
+                        android:gravity="center"
+                        >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/sdk_version"
+                            android:textColor="@color/colorAccent"
+                            android:textSize="16dp"
+                            />
+
+                        <TextView
+                            android:id="@+id/tvSdkVersion"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/secondaryBlack"
+                            android:textSize="14dp"
+                            android:layout_gravity="end"
+                            android:layout_weight="1"
+                            android:layout_marginStart="16dp"
+                            android:text=""
+                            android:gravity="end"
+
+                            />
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>
